@@ -1,21 +1,23 @@
-# Bevy engine, a simple example
+# Simple example using the bevy game engine
 
 A simple example demonstrating sprites, cameras, and keyboard/mouse input. It
 was written in Rust and using Bevy game engine.
+
+![Demo](readme-bevy-example.gif)
 
 This repo exists since good tutorials of bevy are hard to find, which may make
 it difficult for new programmers to want to consider using bevy.
 
 Hopefully whomever reads the code in the repo finds it helpful :)
 
-### Requirements
+## Requirements
 
 The following is required to build the project:
 
 * Rust and Cargo
 * Make (optional)
 
-### Getting started
+## Getting started
 
 To run the example, do a release run via cargo like so:
 
@@ -23,7 +25,7 @@ To run the example, do a release run via cargo like so:
 cargo run --release
 ```
 
-### Building a release:
+## Building a release:
 
 To build a redistributable binary, type:
 
@@ -31,7 +33,7 @@ To build a redistributable binary, type:
 cargo build --release
 ```
 
-### Authors
+## Authors
 
 The code and the graphics and font were created by Robert Bisewski at Ibis
 Cybernetics.
