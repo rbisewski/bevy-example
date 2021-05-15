@@ -1,9 +1,9 @@
 [package]
-name = "nova10"
-version = "1.0.0"
+name = "bevy-example"
+version = "1.0.1"
 authors = ["Robert Bisewski <contact@ibiscybernetics.com>"]
 edition = "2018"
 
 [dependencies]
-bevy = "0.4.0"
+bevy = "0.5.0"
 rand = "0.8.0"

@@ -25,11 +25,6 @@ pub struct Camera {
     twodee: Entity,
 }
 
-#[derive(Default)]
-pub struct CameraState {
-    event_reader: EventReader<KeyboardInput>,
-}
-
 impl Camera {
 
     pub fn new(x: f32, y: f32, z: f32) -> Camera {
@@ -37,29 +32,30 @@ impl Camera {
     }
 
     pub fn start(&mut self, commands: &mut Commands) {
-        commands.spawn(CameraUiBundle::default());
-        self.ui = commands.current_entity().unwrap();
 
-        commands
-            .spawn(Camera2dBundle {
-                transform: Transform {
-                    translation: Vec3::new(self.x, self.y, self.z),
-                    scale: Vec3::splat(1.0/GFX_SCALE),
-                    ..Default::default()
-            },
-            ..Default::default()
-        })
-        .with(CameraEntity);
-        self.twodee = commands.current_entity().unwrap();
+        self.ui = commands
+                     .spawn()
+                     .insert_bundle(UiCameraBundle::default())
+                     .id();
+
+        let mut twodee_cam = OrthographicCameraBundle::new_2d();
+        let mut transform = Transform::from_translation(Vec3::new(self.x, self.y, self.z));
+        transform.scale = Vec3::splat(1.0/GFX_SCALE);
+        twodee_cam.transform = transform;
+
+        self.twodee = commands
+                         .spawn()
+                         .insert_bundle(twodee_cam)
+                         .insert(CameraEntity)
+                         .id();
     }
 }
 
-pub fn camera_event_handler(mut state: Local<CameraState>,
-                            mut cam: ResMut<Camera>,
-                            mut positions: Query<&mut Transform, With<CameraEntity>>,
-                            keyboard_input_events: Res<Events<KeyboardInput>>) {
+pub fn camera_event_handler(mut cam: ResMut<Camera>,
+                            mut event_reader: EventReader<KeyboardInput>,
+                            mut positions: Query<&mut Transform, With<CameraEntity>>) {
 
-    for event in state.event_reader.iter(&keyboard_input_events) {
+    for event in event_reader.iter() {
 
         // ignored released events for now
         if event.state == Released {

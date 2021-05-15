@@ -13,21 +13,23 @@ impl Text {
     }
 
     pub fn render(&self, font: &str, commands: &mut Commands, asset_server: &Res<AssetServer>) {
-        commands.spawn(TextBundle {
-            style: Style {
-                align_self: AlignSelf::FlexEnd,
-                ..Default::default()
-            },
-            text: bevy::prelude::Text {
-                value: self.content.clone(),
-                font: asset_server.load(font),
-                style: TextStyle {
-                    font_size: self.size,
-                    color: self.color,
+        commands
+            .spawn()
+            .insert_bundle(TextBundle {
+                style: Style {
+                    align_self: AlignSelf::FlexEnd,
                     ..Default::default()
                 },
-            },
-            ..Default::default()
-        });
+                text: bevy::prelude::Text::with_section (
+                    self.content.clone(),
+                    TextStyle {
+                        font: asset_server.load(font),
+                        font_size: self.size,
+                        color: self.color,
+                    },
+                    TextAlignment::default()
+                ),
+                ..Default::default()
+            });
     }
 }

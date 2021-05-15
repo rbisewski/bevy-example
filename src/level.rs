@@ -141,23 +141,25 @@ impl Level {
         for tile in self.tiles.iter_mut() {
 
             if tile.initialized {
-                commands.despawn(tile.entity);
+                commands.entity(tile.entity).despawn();
                 tile.initialized = false;
             } 
 
             texture_handle = asset_server.load(tile.img.as_str());
 
-            commands
-                .spawn(SpriteBundle {
-                    material: materials.add(texture_handle.into()),
-                    transform: Transform {
-                        translation: Vec3::new(TILE_SIZE * tile.x as f32, TILE_SIZE * tile.y as f32, 0.0),
-                        ..Default::default()
-                },
-                ..Default::default()
-            });
+            tile.entity =
+                commands
+                    .spawn()
+                    .insert_bundle(SpriteBundle {
+                        material: materials.add(texture_handle.into()),
+                        transform: Transform {
+                            translation: Vec3::new(TILE_SIZE * tile.x as f32, TILE_SIZE * tile.y as f32, 0.0),
+                            ..Default::default()
+                    },
+                    ..Default::default()
+                })
+                .id();
 
-            tile.entity = commands.current_entity().unwrap();
             tile.initialized = true;
         }
     }

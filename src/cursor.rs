@@ -8,11 +8,6 @@ pub struct Cursor {
     entity: Entity,
 }
 
-#[derive(Default)]
-pub struct MouseState {
-    event_reader: EventReader<CursorMoved>,
-}
-
 impl Cursor {
 
     pub fn new(img: String, initialized: bool, entity: Entity) -> Cursor {
@@ -27,29 +22,29 @@ impl Cursor {
         let texture_handle;
 
         if self.initialized {
-            commands.despawn(self.entity);
+            commands.entity(self.entity).despawn();
             self.initialized = false;
         } 
 
         texture_handle = asset_server.load(self.img.as_str());
 
-        commands
-            .spawn(SpriteBundle {
-                material: materials.add(texture_handle.into()),
-                ..Default::default()
-            })
-            .with(CursorEntity);
+        self.entity = commands
+                         .spawn()
+                         .insert_bundle(SpriteBundle {
+                             material: materials.add(texture_handle.into()),
+                             ..Default::default()
+                         })
+                         .insert(CursorEntity)
+                         .id();
 
-        self.entity = commands.current_entity().unwrap();
         self.initialized = true;
     }
 }
 
-pub fn mouse_event_handler(mut state: Local<MouseState>,
-                           mut positions: Query<&mut Transform, With<CursorEntity>>,
-                           mouse_input_events: Res<Events<CursorMoved>>) {
+pub fn mouse_event_handler(mut event_reader: EventReader<CursorMoved>,
+                           mut positions: Query<&mut Transform, With<CursorEntity>>) {
 
-    for event in state.event_reader.iter(&mouse_input_events) {
+    for event in event_reader.iter() {
         for mut transform in positions.iter_mut() {
             transform.translation.x = event.position.x;
             transform.translation.y = event.position.y;

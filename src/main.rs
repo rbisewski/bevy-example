@@ -20,11 +20,6 @@ use bevy::{
     input::keyboard::KeyCode::Escape,
 };
 
-#[derive(Default)]
-pub struct KeyboardState {
-    event_reader: EventReader<KeyboardInput>,
-}
-
 fn main() {
 
     let text_content = [
@@ -35,7 +30,7 @@ fn main() {
     ].concat();
 
     App::build()
-        .add_resource(WindowDescriptor {
+        .insert_resource(WindowDescriptor {
             title: "Bevy engine example using tiles, camera, and keyboard plus mouse input".to_string(),
             width: 1280.0,
             height: 720.0,
@@ -47,10 +42,10 @@ fn main() {
 
         .add_plugins(DefaultPlugins)
 
-        .add_resource(Camera::new(320.0, 320.0, 0.0))
-        .add_resource(Cursor::new("img/ui/mouse_gfx.png".to_string(), false, Entity::new(0)))
-        .add_resource(Level::new(LevelBiome::Marsh))
-        .add_resource(Text::new(32.0, Color::WHITE, &text_content))
+        .insert_resource(Camera::new(320.0, 320.0, 0.0))
+        .insert_resource(Cursor::new("img/ui/mouse_gfx.png".to_string(), false, Entity::new(0)))
+        .insert_resource(Level::new(LevelBiome::Marsh))
+        .insert_resource(Text::new(32.0, Color::WHITE, &text_content))
 
         .add_startup_system(setup.system())
 
@@ -61,7 +56,7 @@ fn main() {
         .run();
 }
 
-fn setup(commands: &mut Commands,
+fn setup(mut commands: Commands,
          asset_server: Res<AssetServer>,
          mut cam: ResMut<Camera>,
          mut cursor: ResMut<Cursor>,
@@ -69,20 +64,19 @@ fn setup(commands: &mut Commands,
          txt: ResMut<Text>,
          mut materials: ResMut<Assets<ColorMaterial>>) {
 
-    cam.start(commands);
-    cursor.render(commands, &asset_server, &mut materials);
-    lvl.render(commands, &asset_server, &mut materials);
-    txt.render("fonts/ultra_thin.ttf", commands, &asset_server);
+    cam.start(&mut commands);
+    cursor.render(&mut commands, &asset_server, &mut materials);
+    lvl.render(&mut commands, &asset_server, &mut materials);
+    txt.render("fonts/ultra_thin.ttf", &mut commands, &asset_server);
 }
 
-fn keyboard_event_handler(commands: &mut Commands,
+fn keyboard_event_handler(mut commands: Commands,
                           asset_server: Res<AssetServer>,
-                          mut state: Local<KeyboardState>,
+                          mut event_reader: EventReader<KeyboardInput>,
                           mut lvl: ResMut<Level>,
-                          mut materials: ResMut<Assets<ColorMaterial>>,
-                          keyboard_input_events: Res<Events<KeyboardInput>>) {
+                          mut materials: ResMut<Assets<ColorMaterial>>) {
 
-    for event in state.event_reader.iter(&keyboard_input_events) {
+    for event in event_reader.iter() {
 
         // ignored released events for now
         if event.state == Released {
@@ -115,7 +109,7 @@ fn keyboard_event_handler(commands: &mut Commands,
                         lvl.change(LevelBiome::Desert);
                     },
                 };
-                lvl.render(commands, &asset_server, &mut materials);
+                lvl.render(&mut commands, &asset_server, &mut materials);
             },
 
             // randomize tiles
@@ -137,7 +131,7 @@ fn keyboard_event_handler(commands: &mut Commands,
                         lvl.change(LevelBiome::Snow);
                     },
                 };
-                lvl.render(commands, &asset_server, &mut materials);
+                lvl.render(&mut commands, &asset_server, &mut materials);
             },
 
             _ => (),
