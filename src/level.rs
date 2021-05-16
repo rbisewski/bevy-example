@@ -38,7 +38,7 @@ impl Level {
         match biome {
             LevelBiome::Desert => {
                 biome_folder = "img/desert/";
-                biome_max = 6;
+                biome_max = 10;
             },
             LevelBiome::Grass => {
                 biome_folder = "img/grass/";
@@ -91,7 +91,7 @@ impl Level {
         match biome {
             LevelBiome::Desert => {
                 biome_folder = "img/desert/";
-                biome_max = 6;
+                biome_max = 10;
             },
             LevelBiome::Grass => {
                 biome_folder = "img/grass/";
