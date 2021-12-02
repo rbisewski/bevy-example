@@ -9,7 +9,7 @@ pub struct Text {
 impl Text {
 
     pub fn new(size: f32, color: Color, content: &str) -> Text {
-        Text { size: size, color: color, content: content.to_string() }
+        Text { size, color, content: content.to_string() }
     }
 
     pub fn render(&self, font: &str, commands: &mut Commands, asset_server: &Res<AssetServer>) {

@@ -11,7 +11,7 @@ pub struct Cursor {
 impl Cursor {
 
     pub fn new(img: String, initialized: bool, entity: Entity) -> Cursor {
-        Cursor { img: img, initialized: initialized, entity: entity }
+        Cursor { img, initialized, entity }
     }
 
     pub fn render(&mut self, 

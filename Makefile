@@ -8,6 +8,13 @@ ifndef VERSION
     VERSION = "n/a"
 endif
 
+FLAGS =
+LLD := $(shell which lld)
+
+ifeq ($(LLD), /usr/bin/lld)
+	FLAGS = -C link-arg=-fuse-ld=lld
+endif
+
 #
 # Makefile options
 #
@@ -27,7 +34,10 @@ build:
 	@cargo build --release
 
 run:
-	@cargo run --release
+	@RUSTFLAGS="${FLAGS}" cargo run --release
+
+lint:
+	@cargo clippy
 
 clean:
 	@echo 'Cleaning...'

@@ -28,7 +28,7 @@ pub struct Camera {
 impl Camera {
 
     pub fn new(x: f32, y: f32, z: f32) -> Camera {
-        Camera { x: x, y: y, z: z, ui: Entity::new(0), twodee: Entity::new(0) }
+        Camera { x, y, z, ui: Entity::new(0), twodee: Entity::new(0) }
     }
 
     pub fn start(&mut self, commands: &mut Commands) {
@@ -67,19 +67,19 @@ pub fn camera_event_handler(mut cam: ResMut<Camera>,
 
                 // move camera
                 Some(Up) | Some(W) => {
-                    cam.y = cam.y + PIXELS_TRANSLATED;
+                    cam.y += PIXELS_TRANSLATED;
                     transform.translation.y = cam.y;
                 },
                 Some(Down) | Some(S) => {
-                    cam.y = cam.y - PIXELS_TRANSLATED;
+                    cam.y -= PIXELS_TRANSLATED;
                     transform.translation.y = cam.y;
                 },
                 Some(Right) | Some(D) => {
-                    cam.x = cam.x + PIXELS_TRANSLATED;
+                    cam.x += PIXELS_TRANSLATED;
                     transform.translation.x = cam.x;
                 },
                 Some(Left) | Some(A) => {
-                    cam.x = cam.x - PIXELS_TRANSLATED;
+                    cam.x -= PIXELS_TRANSLATED;
                     transform.translation.x = cam.x;
                 },
 

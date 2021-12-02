@@ -63,8 +63,8 @@ impl Level {
             for y in min..max {
                 let img_num = rng.gen_range(1..biome_max);
                 let tile: Tile = Tile {
-                    x: x, 
-                    y: y, 
+                    x, 
+                    y, 
                     img: [biome_folder, &img_num.to_string(), ".png"].concat(), 
                     initialized: false,
                     entity: Entity::new(0),
@@ -73,7 +73,7 @@ impl Level {
             }
         }
 
-        Level { biome: biome, tiles: tiles }
+        Level { biome, tiles }
     }
 
     pub fn get_biome(&mut self) -> &LevelBiome {
@@ -116,8 +116,8 @@ impl Level {
             for y in min..max {
                 let img_num = rng.gen_range(1..biome_max);
                 let tile: Tile = Tile {
-                    x: x, 
-                    y: y, 
+                    x, 
+                    y, 
                     img: [biome_folder, &img_num.to_string(), ".png"].concat(), 
                     initialized: false,
                     entity: Entity::new(0),
@@ -135,7 +135,7 @@ impl Level {
                   asset_server: &Res<AssetServer>, 
                   materials: &mut ResMut<Assets<ColorMaterial>>) {
 
-        &self.biome;
+        //&self.biome;
 
         let mut texture_handle;
         for tile in self.tiles.iter_mut() {
