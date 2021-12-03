@@ -49,6 +49,14 @@ impl Camera {
                          .insert(CameraEntity)
                          .id();
     }
+
+    pub fn get_x(&self) -> f32 {
+        self.x
+    }
+
+    pub fn get_y(&self) -> f32 {
+        self.y
+    }
 }
 
 pub fn camera_event_handler(mut cam: ResMut<Camera>,

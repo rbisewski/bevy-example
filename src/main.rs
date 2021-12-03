@@ -14,9 +14,19 @@ use bevy::prelude::*;
 
 use bevy::{
     input::keyboard::KeyboardInput,
+    input::ElementState::Pressed,
     input::ElementState::Released,
     input::keyboard::KeyCode::Key1,
     input::keyboard::KeyCode::Key2,
+    input::keyboard::KeyCode::Key3,
+    input::keyboard::KeyCode::W,
+    input::keyboard::KeyCode::S,
+    input::keyboard::KeyCode::A,
+    input::keyboard::KeyCode::D,
+    input::keyboard::KeyCode::Up,
+    input::keyboard::KeyCode::Down,
+    input::keyboard::KeyCode::Right,
+    input::keyboard::KeyCode::Left,
     input::keyboard::KeyCode::Escape,
 };
 
@@ -25,6 +35,7 @@ fn main() {
     let text_content = [
         " Press {1} to change the biome.\n",
         " Press {2} to randomize the tiles.\n",
+        " Press {3} to enable or disable 4K resolution.\n",
         " Press {W,A,S,D} or the arrow keys to navigate.\n",
         " Press {ESC} to exit the program.",
     ].concat();
@@ -32,6 +43,7 @@ fn main() {
     App::build()
         .insert_resource(WindowDescriptor {
             title: "Bevy engine example using tiles, camera, and keyboard plus mouse input".to_string(),
+            scale_factor_override: Some(1.0),
             width: 1280.0,
             height: 720.0,
             resizable: false,
@@ -73,68 +85,98 @@ fn setup(mut commands: Commands,
 fn keyboard_event_handler(mut commands: Commands,
                           asset_server: Res<AssetServer>,
                           mut event_reader: EventReader<KeyboardInput>,
+                          mut cursor: ResMut<Cursor>,
                           mut lvl: ResMut<Level>,
-                          mut materials: ResMut<Assets<ColorMaterial>>) {
+                          mut materials: ResMut<Assets<ColorMaterial>>,
+                          mut windows: ResMut<Windows>) {
 
     for event in event_reader.iter() {
 
-        // ignored released events for now
-        if event.state == Released {
-            continue;
-        }
+        match event.state {
+            Pressed => {
+                match event.key_code {
 
-        match event.key_code {
+                    // exit
+                    Some(Escape) => {
+                        std::process::exit(0);
+                    },
 
-            // exit
-            Some(Escape) => {
-                std::process::exit(0);
+                    // hide the mouse whilst the camera is panning
+                    Some(Up) | Some(W) | Some(Down) | Some(S) | Some(Right) | Some(D) | Some(Left) | Some(A) => {
+                        cursor.hide(&mut commands);
+                    },
+
+                    // switch biome
+                    Some(Key1) => {
+                        match lvl.get_biome() {
+                            LevelBiome::Desert => {
+                                lvl.change(LevelBiome::Grass);
+                            },
+                            LevelBiome::Grass => {
+                                lvl.change(LevelBiome::Ice);
+                            },
+                            LevelBiome::Ice => {
+                                lvl.change(LevelBiome::Marsh);
+                            },
+                            LevelBiome::Marsh => {
+                                lvl.change(LevelBiome::Snow);
+                            },
+                            LevelBiome::Snow => {
+                                lvl.change(LevelBiome::Desert);
+                            },
+                        };
+                        lvl.render(&mut commands, &asset_server, &mut materials);
+                    },
+
+                    // randomize tiles
+                    Some(Key2) => {
+                        match lvl.get_biome() {
+                            LevelBiome::Desert => {
+                                lvl.change(LevelBiome::Desert);
+                            },
+                            LevelBiome::Grass => {
+                                lvl.change(LevelBiome::Grass);
+                            },
+                            LevelBiome::Ice => {
+                                lvl.change(LevelBiome::Ice);
+                            },
+                            LevelBiome::Marsh => {
+                                lvl.change(LevelBiome::Marsh);
+                            },
+                            LevelBiome::Snow => {
+                                lvl.change(LevelBiome::Snow);
+                            },
+                        };
+                        lvl.render(&mut commands, &asset_server, &mut materials);
+                    },
+
+                    Some(Key3) => {
+                        let window = match windows.get_primary_mut() {
+                            Some(w) => w,
+                            _ => break
+                        };
+                        window.set_scale_factor_override(
+                            window
+                                .scale_factor_override()
+                                .map(|n| ((n % 2.) + 1.))
+                        );
+                    },
+
+                    _ => (),
+                }
+
             },
+            Released => {
+                match event.key_code {
 
-            // switch biome
-            Some(Key1) => {
-                match lvl.get_biome() {
-                    LevelBiome::Desert => {
-                        lvl.change(LevelBiome::Grass);
+                    // restore the mouse cursor once the camera stops
+                    Some(Up) | Some(W) | Some(Down) | Some(S) | Some(Right) | Some(D) | Some(Left) | Some(A) => {
+                        cursor.render(&mut commands, &asset_server, &mut materials);
                     },
-                    LevelBiome::Grass => {
-                        lvl.change(LevelBiome::Ice);
-                    },
-                    LevelBiome::Ice => {
-                        lvl.change(LevelBiome::Marsh);
-                    },
-                    LevelBiome::Marsh => {
-                        lvl.change(LevelBiome::Snow);
-                    },
-                    LevelBiome::Snow => {
-                        lvl.change(LevelBiome::Desert);
-                    },
-                };
-                lvl.render(&mut commands, &asset_server, &mut materials);
+
+                    _ => (),
+                }
             },
-
-            // randomize tiles
-            Some(Key2) => {
-                match lvl.get_biome() {
-                    LevelBiome::Desert => {
-                        lvl.change(LevelBiome::Desert);
-                    },
-                    LevelBiome::Grass => {
-                        lvl.change(LevelBiome::Grass);
-                    },
-                    LevelBiome::Ice => {
-                        lvl.change(LevelBiome::Ice);
-                    },
-                    LevelBiome::Marsh => {
-                        lvl.change(LevelBiome::Marsh);
-                    },
-                    LevelBiome::Snow => {
-                        lvl.change(LevelBiome::Snow);
-                    },
-                };
-                lvl.render(&mut commands, &asset_server, &mut materials);
-            },
-
-            _ => (),
         }
     }
 }
