@@ -23,12 +23,14 @@ pub struct Camera {
     z: f32,
     ui: Entity,
     twodee: Entity,
+    screen_height: f32,
+    screen_width: f32,
 }
 
 impl Camera {
 
-    pub fn new(x: f32, y: f32, z: f32) -> Camera {
-        Camera { x, y, z, ui: Entity::new(0), twodee: Entity::new(0) }
+    pub fn new(x: f32, y: f32, z: f32, screen_height: f32, screen_width: f32) -> Camera {
+        Camera { x, y, z, ui: Entity::new(0), twodee: Entity::new(0), screen_height, screen_width }
     }
 
     pub fn start(&mut self, commands: &mut Commands) {
@@ -48,6 +50,22 @@ impl Camera {
                          .insert_bundle(twodee_cam)
                          .insert(CameraEntity)
                          .id();
+    }
+
+    pub fn get_x(&self) -> f32 {
+        self.x
+    }
+
+    pub fn get_y(&self) -> f32 {
+        self.y
+    }
+
+    pub fn screen_height(&self) -> f32 {
+        self.screen_height
+    }
+
+    pub fn screen_width(&self) -> f32 {
+        self.screen_width
     }
 }
 
