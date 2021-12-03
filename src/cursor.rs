@@ -62,12 +62,12 @@ pub fn mouse_event_handler(mut event_reader: EventReader<CursorMoved>,
         for mut transform in positions.iter_mut() {
 
             // record the cursor's position on the screen
-            cursor.x = event.position.x + cam.get_x();
-            cursor.y = event.position.y + cam.get_y();
+            cursor.x = event.position.x + cam.get_x() - (cam.screen_width()/2.0);
+            cursor.y = event.position.y + cam.get_y() - (cam.screen_height()/2.0);
 
             // move the mouse graphic to the desired location
-            transform.translation.x = event.position.x + cam.get_x();
-            transform.translation.y = event.position.y + cam.get_y();
+            transform.translation.x = event.position.x + cam.get_x() - (cam.screen_width()/2.0);
+            transform.translation.y = event.position.y + cam.get_y() - (cam.screen_height()/2.0);
         }
     }
 }

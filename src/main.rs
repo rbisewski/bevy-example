@@ -30,6 +30,9 @@ use bevy::{
     input::keyboard::KeyCode::Escape,
 };
 
+const SCREEN_HEIGHT: f32 = 720.0;
+const SCREEN_WIDTH: f32 = 1280.0;
+
 fn main() {
 
     let text_content = [
@@ -44,8 +47,8 @@ fn main() {
         .insert_resource(WindowDescriptor {
             title: "Bevy engine example using tiles, camera, and keyboard plus mouse input".to_string(),
             scale_factor_override: Some(1.0),
-            width: 1280.0,
-            height: 720.0,
+            width: SCREEN_WIDTH,
+            height: SCREEN_HEIGHT,
             resizable: false,
             cursor_visible: false,
             vsync: true,
@@ -54,7 +57,7 @@ fn main() {
 
         .add_plugins(DefaultPlugins)
 
-        .insert_resource(Camera::new(320.0, 320.0, 0.0))
+        .insert_resource(Camera::new(320.0, 320.0, 0.0, SCREEN_HEIGHT, SCREEN_WIDTH))
         .insert_resource(Cursor::new("img/ui/mouse_gfx.png".to_string(), false, Entity::new(0)))
         .insert_resource(Level::new(LevelBiome::Marsh))
         .insert_resource(Text::new(32.0, Color::WHITE, &text_content))
