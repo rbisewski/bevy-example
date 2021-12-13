@@ -25,6 +25,14 @@ pub struct Level {
     tiles: Vec<Tile>,
 }
 
+impl Tile {
+
+    pub fn set_image(&mut self, img: String) {
+        self.img = img;
+    }
+
+}
+
 impl Level {
 
     pub fn new(biome: LevelBiome) -> Level {
@@ -33,28 +41,27 @@ impl Level {
         let max = 22;
         let mut tiles: Vec<Tile> = Vec::new();
 
-        let biome_folder;
         let biome_max;
-        match biome {
+        let biome_folder = match biome {
             LevelBiome::Desert => {
-                biome_folder = "img/desert/";
                 biome_max = 10;
+                "img/desert/"
             },
             LevelBiome::Grass => {
-                biome_folder = "img/grass/";
                 biome_max = 8;
+                "img/grass/"
             },
             LevelBiome::Ice => {
-                biome_folder = "img/ice/";
                 biome_max = 6;
+                "img/ice/"
             },
             LevelBiome::Marsh => {
-                biome_folder = "img/marsh/";
                 biome_max = 14;
+                "img/marsh/"
             },
             LevelBiome::Snow => {
-                biome_folder = "img/snow/";
                 biome_max = 6;
+                "img/snow/"
             },
         };
 
@@ -82,60 +89,46 @@ impl Level {
 
     pub fn change(&mut self, biome: LevelBiome) {
 
-        let min = 0;
-        let max = 22;
-        let mut tiles: Vec<Tile> = Vec::new();
-
-        let biome_folder;
         let biome_max;
-        match biome {
+
+        let biome_folder = match biome {
             LevelBiome::Desert => {
-                biome_folder = "img/desert/";
                 biome_max = 10;
+                "img/desert/"
             },
             LevelBiome::Grass => {
-                biome_folder = "img/grass/";
                 biome_max = 8;
+                "img/grass/"
             },
             LevelBiome::Ice => {
-                biome_folder = "img/ice/";
                 biome_max = 6;
+                "img/ice/"
             },
             LevelBiome::Marsh => {
-                biome_folder = "img/marsh/";
                 biome_max = 14;
+                "img/marsh/"
             },
             LevelBiome::Snow => {
-                biome_folder = "img/snow/";
                 biome_max = 6;
+                "img/snow/"
             },
         };
 
-        let mut rng = rand::thread_rng();
-        for x in min..max {
-            for y in min..max {
-                let img_num = rng.gen_range(1..biome_max);
-                let tile: Tile = Tile {
-                    x, 
-                    y, 
-                    img: [biome_folder, &img_num.to_string(), ".png"].concat(), 
-                    initialized: false,
-                    entity: Entity::new(0),
-                };
-                tiles.push(tile);
-            }
-        }
-
         self.biome = biome;
-        self.tiles = tiles;
+
+        let mut rng = rand::thread_rng();
+        for tile in self.tiles.iter_mut() {
+            let img_num = rng.gen_range(1..biome_max);
+            tile.set_image(
+                [biome_folder, &img_num.to_string(), ".png"].concat()
+            );
+        }
     }
 
     pub fn render(&mut self, 
                   commands: &mut Commands, 
                   asset_server: &Res<AssetServer>, 
                   materials: &mut ResMut<Assets<ColorMaterial>>) {
-
-        //&self.biome;
 
         let mut texture_handle;
         for tile in self.tiles.iter_mut() {
