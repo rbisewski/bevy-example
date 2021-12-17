@@ -1,4 +1,15 @@
-use bevy::prelude::*;
+use bevy::prelude::{
+    Commands,
+    Entity,
+    EventReader,
+    Query,
+    ResMut,
+    OrthographicCameraBundle,
+    Transform,
+    UiCameraBundle,
+    Vec3,
+    With,
+};
 use bevy::{
     input::keyboard::KeyboardInput,
     input::ElementState::Released,

@@ -1,4 +1,14 @@
-use bevy::prelude::*;
+use bevy::prelude::{
+    AlignSelf,
+    AssetServer,
+    Commands,
+    Color,
+    Res,
+    Style,
+    TextAlignment,
+    TextBundle,
+    TextStyle,
+};
 
 pub struct Text {
     size: f32,

@@ -4,13 +4,30 @@ use camera::{Camera, camera_event_handler};
 mod cursor;
 use cursor::{Cursor, mouse_event_handler};
 
+mod tile;
+
 mod level;
 use level::{Level, LevelBiome};
 
 mod text;
 use text::Text;
 
-use bevy::prelude::*;
+use bevy::prelude::{
+    App,
+    Assets,
+    AssetServer,
+    Color,
+    ColorMaterial,
+    Commands,
+    DefaultPlugins,
+    Entity,
+    EventReader,
+    Res,
+    ResMut,
+    IntoSystem,
+    Windows,
+    WindowDescriptor,
+};
 
 use bevy::{
     input::keyboard::KeyboardInput,

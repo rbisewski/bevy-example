@@ -1,15 +1,18 @@
-use bevy::prelude::*;
+use bevy::prelude::{
+    Commands,
+    Assets,
+    AssetServer,
+    ColorMaterial,
+    Transform,
+    Res,
+    ResMut,
+    SpriteBundle,
+    Vec3,
+};
+
 use rand::Rng;
 
-static TILE_SIZE: f32 = 32.0;
-
-struct Tile {
-    x: u32,
-    y: u32,
-    img: String,
-    initialized: bool,
-    entity: Entity,
-}
+use crate::tile::{Tile, TILE_SIZE};
 
 #[allow(dead_code)]
 pub enum LevelBiome {
@@ -23,14 +26,6 @@ pub enum LevelBiome {
 pub struct Level {
     biome: LevelBiome,
     tiles: Vec<Tile>,
-}
-
-impl Tile {
-
-    pub fn set_image(&mut self, img: String) {
-        self.img = img;
-    }
-
 }
 
 impl Level {
@@ -69,13 +64,7 @@ impl Level {
         for x in min..max {
             for y in min..max {
                 let img_num = rng.gen_range(1..biome_max);
-                let tile: Tile = Tile {
-                    x, 
-                    y, 
-                    img: [biome_folder, &img_num.to_string(), ".png"].concat(), 
-                    initialized: false,
-                    entity: Entity::new(0),
-                };
+                let tile = Tile::new(x, y, [biome_folder, &img_num.to_string(), ".png"].concat());
                 tiles.push(tile);
             }
         }
@@ -133,27 +122,30 @@ impl Level {
         let mut texture_handle;
         for tile in self.tiles.iter_mut() {
 
-            if tile.initialized {
-                commands.entity(tile.entity).despawn();
-                tile.initialized = false;
+            if tile.get_initialized() {
+                commands.entity(tile.get_entity()).despawn();
+                tile.set_initialized(false);
             } 
 
-            texture_handle = asset_server.load(tile.img.as_str());
+            texture_handle = asset_server.load(tile.get_image_as_str());
 
-            tile.entity =
+            let x = tile.get_x();
+            let y = tile.get_y();
+            tile.set_entity(
                 commands
                     .spawn()
                     .insert_bundle(SpriteBundle {
                         material: materials.add(texture_handle.into()),
                         transform: Transform {
-                            translation: Vec3::new(TILE_SIZE * tile.x as f32, TILE_SIZE * tile.y as f32, 0.0),
+                            translation: Vec3::new(TILE_SIZE * x as f32, TILE_SIZE * y as f32, 0.0),
                             ..Default::default()
                     },
                     ..Default::default()
                 })
-                .id();
+                .id()
+            );
 
-            tile.initialized = true;
+            tile.set_initialized(true);
         }
     }
 }

@@ -1,4 +1,18 @@
-use bevy::prelude::*;
+use bevy::prelude::{
+    Assets,
+    AssetServer,
+    ColorMaterial,
+    Commands,
+    CursorMoved,
+    Entity,
+    EventReader,
+    Query,
+    Res,
+    ResMut,
+    SpriteBundle,
+    Transform,
+    With,
+};
 
 use crate::camera::Camera;
 
