@@ -4,6 +4,8 @@ use camera::{Camera, camera_event_handler};
 mod cursor;
 use cursor::{Cursor, mouse_event_handler};
 
+mod decal;
+
 mod tile;
 
 mod level;
@@ -47,6 +49,8 @@ use bevy::{
     input::keyboard::KeyCode::Escape,
 };
 
+const CAMERA_HIGHEST_LEVEL: f32 = 1.0;
+
 const SCREEN_HEIGHT: f32 = 720.0;
 const SCREEN_WIDTH: f32 = 1280.0;
 
@@ -74,7 +78,7 @@ fn main() {
 
         .add_plugins(DefaultPlugins)
 
-        .insert_resource(Camera::new(320.0, 320.0, 0.0, SCREEN_HEIGHT, SCREEN_WIDTH))
+        .insert_resource(Camera::new(320.0, 320.0, CAMERA_HIGHEST_LEVEL, SCREEN_HEIGHT, SCREEN_WIDTH))
         .insert_resource(Cursor::new("img/ui/mouse_gfx.png".to_string(), false, Entity::new(0)))
         .insert_resource(Level::new(LevelBiome::Marsh))
         .insert_resource(Text::new(32.0, Color::WHITE, &text_content))

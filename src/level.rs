@@ -8,10 +8,12 @@ use bevy::prelude::{
     ResMut,
     SpriteBundle,
     Vec3,
+    Visible,
 };
 
 use rand::Rng;
 
+use crate::decal::Decal;
 use crate::tile::{Tile, TILE_SIZE};
 
 #[allow(dead_code)]
@@ -26,6 +28,8 @@ pub enum LevelBiome {
 pub struct Level {
     biome: LevelBiome,
     tiles: Vec<Tile>,
+    decal_types: Vec<String>,
+    decals: Vec<Decal>,
 }
 
 impl Level {
@@ -34,33 +38,13 @@ impl Level {
 
         let min = 0;
         let max = 22;
+        let mut decals: Vec<Decal> = Vec::new();
         let mut tiles: Vec<Tile> = Vec::new();
 
-        let biome_max;
-        let biome_folder = match biome {
-            LevelBiome::Desert => {
-                biome_max = 10;
-                "img/desert/"
-            },
-            LevelBiome::Grass => {
-                biome_max = 8;
-                "img/grass/"
-            },
-            LevelBiome::Ice => {
-                biome_max = 6;
-                "img/ice/"
-            },
-            LevelBiome::Marsh => {
-                biome_max = 14;
-                "img/marsh/"
-            },
-            LevelBiome::Snow => {
-                biome_max = 6;
-                "img/snow/"
-            },
-        };
+        let (biome_max, biome_folder, decal_types) = Level::set_biome(&biome);
 
         let mut rng = rand::thread_rng();
+
         for x in min..max {
             for y in min..max {
                 let img_num = rng.gen_range(1..biome_max);
@@ -69,7 +53,97 @@ impl Level {
             }
         }
 
-        Level { biome, tiles }
+        // generate 30 to 40 random decals
+        let decal_amount = rng.gen_range(30..40);
+        for _ in 0..decal_amount {
+
+            let x = rng.gen_range(0..22);
+            let y = rng.gen_range(0..22);
+
+            let random_decal_type = rng.gen_range(0..decal_types.len());
+
+            let decal_max = Decal::get_decal_type_max(
+                "./assets/img/decals/".to_string(),
+                decal_types[random_decal_type].as_str().to_string(),
+            );
+            let img_num = match decal_max {
+                1 => 1,
+                _ => rng.gen_range(1..decal_max+1),
+            };
+
+            let img = [
+                "img/decals/",
+                decal_types[random_decal_type].as_str(),
+                &img_num.to_string(),
+                ".png"
+            ].concat();
+
+            let decal = Decal::new(x,y,img);
+            decals.push(decal);
+        }
+
+        Level { biome, tiles, decal_types, decals }
+    }
+
+    /*
+     * Changes the biome type and associated details
+     *
+     * @param    LevelBiome  biome type, such as Grass or Desert
+     *
+     * @returns  i32         biome max number
+     *           char*       biome folder location
+     *           string[]    list of possible decal types
+     */
+    pub fn set_biome(biome: &LevelBiome) -> (i32, &'static str, Vec<String>) {
+        let decal_types: Vec<String>;
+        let biome_max;
+        let biome_folder = match biome {
+            LevelBiome::Desert => {
+                biome_max = 10;
+                decal_types = vec![
+                    "bones_".to_string(),
+                    "cactus_".to_string(),
+                    "rock_".to_string(),
+                ];
+                "img/desert/"
+            },
+            LevelBiome::Grass => {
+                biome_max = 8;
+                decal_types = vec![
+                    "flower_".to_string(),
+                    "plant_".to_string(),
+                    "mushroom_".to_string(),
+                    "rock_".to_string(),
+                ];
+                "img/grass/"
+            },
+            LevelBiome::Ice => {
+                biome_max = 6;
+                decal_types = vec![
+                    "rock_".to_string(),
+                ];
+                "img/ice/"
+            },
+            LevelBiome::Marsh => {
+                biome_max = 14;
+                decal_types = vec![
+                    "flower_".to_string(),
+                    "plant_".to_string(),
+                    "mushroom_".to_string(),
+                    "rock_".to_string(),
+                ];
+                "img/marsh/"
+            },
+            LevelBiome::Snow => {
+                biome_max = 6;
+                decal_types = vec![
+                    "rock_".to_string(),
+                ];
+                "img/snow/"
+            },
+        };
+
+        (biome_max, biome_folder, decal_types)
     }
 
     pub fn get_biome(&mut self) -> &LevelBiome {
@@ -78,54 +152,55 @@ impl Level {
 
     pub fn change(&mut self, biome: LevelBiome) {
 
-        let biome_max;
-
-        let biome_folder = match biome {
-            LevelBiome::Desert => {
-                biome_max = 10;
-                "img/desert/"
-            },
-            LevelBiome::Grass => {
-                biome_max = 8;
-                "img/grass/"
-            },
-            LevelBiome::Ice => {
-                biome_max = 6;
-                "img/ice/"
-            },
-            LevelBiome::Marsh => {
-                biome_max = 14;
-                "img/marsh/"
-            },
-            LevelBiome::Snow => {
-                biome_max = 6;
-                "img/snow/"
-            },
-        };
+        let (biome_max, biome_folder, decal_types) = Level::set_biome(&biome);
 
         self.biome = biome;
+        self.decal_types = decal_types;
 
         let mut rng = rand::thread_rng();
+
         for tile in self.tiles.iter_mut() {
             let img_num = rng.gen_range(1..biome_max);
             tile.set_image(
                 [biome_folder, &img_num.to_string(), ".png"].concat()
             );
         }
+
+        for decal in self.decals.iter_mut() {
+            let random_decal_type = rng.gen_range(0..self.decal_types.len());
+            let decal_max = Decal::get_decal_type_max(
+                "./assets/img/decals/".to_string(),
+                self.decal_types[random_decal_type].as_str().to_string(),
+            );
+            let img_num = match decal_max {
+                1 => 1,
+                _ => rng.gen_range(1..decal_max+1),
+            };
+            decal.set_image([
+                "img/decals/",
+                self.decal_types[random_decal_type].as_str(),
+                &img_num.to_string(),
+                ".png"
+            ].concat());
+        }
     }
 
-    pub fn render(&mut self, 
-                  commands: &mut Commands, 
-                  asset_server: &Res<AssetServer>, 
+    pub fn render(&mut self,
+                  commands: &mut Commands,
+                  asset_server: &Res<AssetServer>,
                   materials: &mut ResMut<Assets<ColorMaterial>>) {
 
         let mut texture_handle;
+
+        //
+        // TILES
+        //
         for tile in self.tiles.iter_mut() {
 
             if tile.get_initialized() {
                 commands.entity(tile.get_entity()).despawn();
                 tile.set_initialized(false);
-            } 
+            }
 
             texture_handle = asset_server.load(tile.get_image_as_str());
 
@@ -137,7 +212,7 @@ impl Level {
                     .insert_bundle(SpriteBundle {
                         material: materials.add(texture_handle.into()),
                         transform: Transform {
-                            translation: Vec3::new(TILE_SIZE * x as f32, TILE_SIZE * y as f32, 0.0),
+                            translation: Vec3::new(TILE_SIZE * x as f32, TILE_SIZE * y as f32, 0.),
                             ..Default::default()
                     },
                     ..Default::default()
@@ -146,6 +221,41 @@ impl Level {
             );
 
             tile.set_initialized(true);
+        }
+
+        //
+        // DECALS
+        //
+        for decal in self.decals.iter_mut() {
+
+            if decal.get_initialized() {
+                commands.entity(decal.get_entity()).despawn();
+                decal.set_initialized(false);
+            }
+
+            texture_handle = asset_server.load(decal.get_image_as_str());
+
+            let x = decal.get_x();
+            let y = decal.get_y();
+            decal.set_entity(
+                commands
+                    .spawn()
+                    .insert_bundle(SpriteBundle {
+                        material: materials.add(texture_handle.into()),
+                        visible: Visible {
+                            is_visible: true,
+                            is_transparent: true,
+                        },
+                        transform: Transform {
+                            translation: Vec3::new(TILE_SIZE * x as f32, TILE_SIZE * y as f32, 1.),
+                            ..Default::default()
+                    },
+                    ..Default::default()
+                })
+                .id()
+            );
+
+            decal.set_initialized(true);
         }
     }
 }
