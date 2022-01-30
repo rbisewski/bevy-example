@@ -1,11 +1,8 @@
 use bevy::prelude::{
     Commands,
-    Assets,
     AssetServer,
-    ColorMaterial,
     Transform,
     Res,
-    ResMut,
     SpriteBundle,
     Vec3,
     Visibility,
@@ -187,8 +184,7 @@ impl Level {
 
     pub fn render(&mut self,
                   commands: &mut Commands,
-                  asset_server: &Res<AssetServer>,
-                  materials: &mut ResMut<Assets<ColorMaterial>>) {
+                  asset_server: &Res<AssetServer>) {
 
         //
         // TILES
@@ -216,8 +212,6 @@ impl Level {
                 })
                 .id()
             );
-
-            materials.add(ColorMaterial::from(asset_server.load(tile.get_image_as_str())));
 
             tile.set_initialized(true);
         }
@@ -251,8 +245,6 @@ impl Level {
                 })
                 .id()
             );
-
-            materials.add(ColorMaterial::from(asset_server.load(decal.get_image_as_str())));
 
             decal.set_initialized(true);
         }

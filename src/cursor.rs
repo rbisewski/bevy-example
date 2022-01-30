@@ -1,7 +1,5 @@
 use bevy::prelude::{
-    Assets,
     AssetServer,
-    ColorMaterial,
     Commands,
     Component,
     CursorMoved,
@@ -36,8 +34,7 @@ impl Cursor {
 
     pub fn render(&mut self, 
                   commands: &mut Commands, 
-                  asset_server: &Res<AssetServer>, 
-                  materials: &mut ResMut<Assets<ColorMaterial>>) {
+                  asset_server: &Res<AssetServer>) {
 
         if self.initialized {
             commands.entity(self.entity).despawn();
@@ -53,8 +50,6 @@ impl Cursor {
                          })
                          .insert(CursorEntity)
                          .id();
-
-        materials.add(ColorMaterial::from(asset_server.load(self.img.as_str())));
 
         self.initialized = true;
     }

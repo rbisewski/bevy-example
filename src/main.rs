@@ -16,10 +16,8 @@ use text::Text;
 
 use bevy::prelude::{
     App,
-    Assets,
     AssetServer,
     Color,
-    ColorMaterial,
     Commands,
     DefaultPlugins,
     Entity,
@@ -96,12 +94,11 @@ fn setup(mut commands: Commands,
          mut cam: ResMut<Camera>,
          mut cursor: ResMut<Cursor>,
          mut lvl: ResMut<Level>,
-         txt: ResMut<Text>,
-         mut materials: ResMut<Assets<ColorMaterial>>) {
+         txt: ResMut<Text>) {
 
     cam.start(&mut commands);
-    cursor.render(&mut commands, &asset_server, &mut materials);
-    lvl.render(&mut commands, &asset_server, &mut materials);
+    cursor.render(&mut commands, &asset_server);
+    lvl.render(&mut commands, &asset_server);
     txt.render("fonts/ultra_thin.ttf", &mut commands, &asset_server);
 }
 
@@ -110,7 +107,6 @@ fn keyboard_event_handler(mut commands: Commands,
                           mut event_reader: EventReader<KeyboardInput>,
                           mut cursor: ResMut<Cursor>,
                           mut lvl: ResMut<Level>,
-                          mut materials: ResMut<Assets<ColorMaterial>>,
                           mut windows: ResMut<Windows>) {
 
     for event in event_reader.iter() {
@@ -148,7 +144,7 @@ fn keyboard_event_handler(mut commands: Commands,
                                 lvl.change(LevelBiome::Desert);
                             },
                         };
-                        lvl.render(&mut commands, &asset_server, &mut materials);
+                        lvl.render(&mut commands, &asset_server);
                     },
 
                     // randomize tiles
@@ -170,7 +166,7 @@ fn keyboard_event_handler(mut commands: Commands,
                                 lvl.change(LevelBiome::Snow);
                             },
                         };
-                        lvl.render(&mut commands, &asset_server, &mut materials);
+                        lvl.render(&mut commands, &asset_server);
                     },
 
                     Some(Key3) => {
@@ -194,7 +190,7 @@ fn keyboard_event_handler(mut commands: Commands,
 
                     // restore the mouse cursor once the camera stops
                     Some(Up) | Some(W) | Some(Down) | Some(S) | Some(Right) | Some(D) | Some(Left) | Some(A) => {
-                        cursor.render(&mut commands, &asset_server, &mut materials);
+                        cursor.render(&mut commands, &asset_server);
                     },
 
                     _ => (),
