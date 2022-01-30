@@ -8,7 +8,7 @@ use bevy::prelude::{
     ResMut,
     SpriteBundle,
     Vec3,
-    Visible,
+    Visibility,
 };
 
 use rand::Rng;
@@ -190,8 +190,6 @@ impl Level {
                   asset_server: &Res<AssetServer>,
                   materials: &mut ResMut<Assets<ColorMaterial>>) {
 
-        let mut texture_handle;
-
         //
         // TILES
         //
@@ -202,15 +200,14 @@ impl Level {
                 tile.set_initialized(false);
             }
 
-            texture_handle = asset_server.load(tile.get_image_as_str());
-
             let x = tile.get_x();
             let y = tile.get_y();
+            let path_to_texture = asset_server.load(tile.get_image_as_str());
             tile.set_entity(
                 commands
                     .spawn()
                     .insert_bundle(SpriteBundle {
-                        material: materials.add(texture_handle.into()),
+                        texture: path_to_texture,
                         transform: Transform {
                             translation: Vec3::new(TILE_SIZE * x as f32, TILE_SIZE * y as f32, 0.),
                             ..Default::default()
@@ -219,6 +216,8 @@ impl Level {
                 })
                 .id()
             );
+
+            materials.add(ColorMaterial::from(asset_server.load(tile.get_image_as_str())));
 
             tile.set_initialized(true);
         }
@@ -233,18 +232,16 @@ impl Level {
                 decal.set_initialized(false);
             }
 
-            texture_handle = asset_server.load(decal.get_image_as_str());
-
             let x = decal.get_x();
             let y = decal.get_y();
+            let path_to_texture = asset_server.load(decal.get_image_as_str());
             decal.set_entity(
                 commands
                     .spawn()
                     .insert_bundle(SpriteBundle {
-                        material: materials.add(texture_handle.into()),
-                        visible: Visible {
+                        texture: path_to_texture,
+                        visibility: Visibility {
                             is_visible: true,
-                            is_transparent: true,
                         },
                         transform: Transform {
                             translation: Vec3::new(TILE_SIZE * x as f32, TILE_SIZE * y as f32, 1.),
@@ -254,6 +251,8 @@ impl Level {
                 })
                 .id()
             );
+
+            materials.add(ColorMaterial::from(asset_server.load(decal.get_image_as_str())));
 
             decal.set_initialized(true);
         }

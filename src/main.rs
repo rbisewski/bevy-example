@@ -26,7 +26,6 @@ use bevy::prelude::{
     EventReader,
     Res,
     ResMut,
-    IntoSystem,
     Windows,
     WindowDescriptor,
 };
@@ -64,7 +63,7 @@ fn main() {
         " Press {ESC} to exit the program.",
     ].concat();
 
-    App::build()
+    App::new()
         .insert_resource(WindowDescriptor {
             title: "Bevy engine example using tiles, camera, and keyboard plus mouse input".to_string(),
             scale_factor_override: Some(1.0),
@@ -79,15 +78,15 @@ fn main() {
         .add_plugins(DefaultPlugins)
 
         .insert_resource(Camera::new(320.0, 320.0, CAMERA_HIGHEST_LEVEL, SCREEN_HEIGHT, SCREEN_WIDTH))
-        .insert_resource(Cursor::new("img/ui/mouse_gfx.png".to_string(), false, Entity::new(0)))
+        .insert_resource(Cursor::new("img/ui/mouse_gfx.png".to_string(), false, Entity::from_raw(0)))
         .insert_resource(Level::new(LevelBiome::Marsh))
         .insert_resource(Text::new(32.0, Color::WHITE, &text_content))
 
-        .add_startup_system(setup.system())
+        .add_startup_system(setup)
 
-        .add_system(camera_event_handler.system())
-        .add_system(keyboard_event_handler.system())
-        .add_system(mouse_event_handler.system())
+        .add_system(camera_event_handler)
+        .add_system(keyboard_event_handler)
+        .add_system(mouse_event_handler)
 
         .run();
 }

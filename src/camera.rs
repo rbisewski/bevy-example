@@ -1,5 +1,6 @@
 use bevy::prelude::{
     Commands,
+    Component,
     Entity,
     EventReader,
     Query,
@@ -26,6 +27,7 @@ use bevy::{
 static GFX_SCALE: f32 = 2.0;
 static PIXELS_TRANSLATED: f32 = 8.0;
 
+#[derive(Component)]
 pub struct CameraEntity;
 
 pub struct Camera {
@@ -41,7 +43,7 @@ pub struct Camera {
 impl Camera {
 
     pub fn new(x: f32, y: f32, z: f32, screen_height: f32, screen_width: f32) -> Camera {
-        Camera { x, y, z, ui: Entity::new(0), twodee: Entity::new(0), screen_height, screen_width }
+        Camera { x, y, z, ui: Entity::from_raw(0), twodee: Entity::from_raw(0), screen_height, screen_width }
     }
 
     pub fn start(&mut self, commands: &mut Commands) {
