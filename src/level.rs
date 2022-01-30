@@ -4,12 +4,12 @@ use bevy::prelude::{
     Transform,
     Res,
     SpriteBundle,
-    Vec3,
     Visibility,
 };
 
 use rand::Rng;
 
+use crate::constants::{Z_VALUE_DECAL, Z_VALUE_TILE};
 use crate::decal::Decal;
 use crate::tile::{Tile, TILE_SIZE};
 
@@ -204,10 +204,7 @@ impl Level {
                     .spawn()
                     .insert_bundle(SpriteBundle {
                         texture: path_to_texture,
-                        transform: Transform {
-                            translation: Vec3::new(TILE_SIZE * x as f32, TILE_SIZE * y as f32, 0.),
-                            ..Default::default()
-                    },
+                        transform: Transform::from_xyz(TILE_SIZE * x as f32, TILE_SIZE * y as f32, Z_VALUE_TILE),
                     ..Default::default()
                 })
                 .id()
@@ -237,10 +234,7 @@ impl Level {
                         visibility: Visibility {
                             is_visible: true,
                         },
-                        transform: Transform {
-                            translation: Vec3::new(TILE_SIZE * x as f32, TILE_SIZE * y as f32, 1.),
-                            ..Default::default()
-                    },
+                        transform: Transform::from_xyz(TILE_SIZE * x as f32, TILE_SIZE * y as f32, Z_VALUE_DECAL),
                     ..Default::default()
                 })
                 .id()

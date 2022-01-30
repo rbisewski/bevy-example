@@ -14,6 +14,7 @@ use bevy::prelude::{
 };
 
 use crate::camera::Camera;
+use crate::constants::Z_VALUE_CURSOR;
 
 #[derive(Component)]
 pub struct CursorEntity;
@@ -45,7 +46,7 @@ impl Cursor {
                          .spawn()
                          .insert_bundle(SpriteBundle {
                              texture: asset_server.load(self.img.as_str()),
-                             transform: Transform::from_xyz(self.x, self.y, 0.0),
+                             transform: Transform::from_xyz(self.x, self.y, Z_VALUE_CURSOR),
                              ..Default::default()
                          })
                          .insert(CursorEntity)

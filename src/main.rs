@@ -1,6 +1,8 @@
 mod camera;
 use camera::{Camera, camera_event_handler};
 
+mod constants;
+
 mod cursor;
 use cursor::{Cursor, mouse_event_handler};
 
