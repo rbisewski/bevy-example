@@ -1,8 +1,7 @@
 use bevy::prelude::{
-    Assets,
     AssetServer,
-    ColorMaterial,
     Commands,
+    Component,
     CursorMoved,
     Entity,
     EventReader,
@@ -16,6 +15,7 @@ use bevy::prelude::{
 
 use crate::camera::Camera;
 
+#[derive(Component)]
 pub struct CursorEntity;
 
 pub struct Cursor {
@@ -34,22 +34,17 @@ impl Cursor {
 
     pub fn render(&mut self, 
                   commands: &mut Commands, 
-                  asset_server: &Res<AssetServer>, 
-                  materials: &mut ResMut<Assets<ColorMaterial>>) {
-
-        let texture_handle;
+                  asset_server: &Res<AssetServer>) {
 
         if self.initialized {
             commands.entity(self.entity).despawn();
             self.initialized = false;
         } 
 
-        texture_handle = asset_server.load(self.img.as_str());
-
         self.entity = commands
                          .spawn()
                          .insert_bundle(SpriteBundle {
-                             material: materials.add(texture_handle.into()),
+                             texture: asset_server.load(self.img.as_str()),
                              transform: Transform::from_xyz(self.x, self.y, 0.0),
                              ..Default::default()
                          })

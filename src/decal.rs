@@ -17,7 +17,7 @@ impl Decal {
             y,
             img,
             initialized: false,
-            entity: Entity::new(0),
+            entity: Entity::from_raw(0),
         }
     }
 

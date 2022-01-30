@@ -16,17 +16,14 @@ use text::Text;
 
 use bevy::prelude::{
     App,
-    Assets,
     AssetServer,
     Color,
-    ColorMaterial,
     Commands,
     DefaultPlugins,
     Entity,
     EventReader,
     Res,
     ResMut,
-    IntoSystem,
     Windows,
     WindowDescriptor,
 };
@@ -64,7 +61,7 @@ fn main() {
         " Press {ESC} to exit the program.",
     ].concat();
 
-    App::build()
+    App::new()
         .insert_resource(WindowDescriptor {
             title: "Bevy engine example using tiles, camera, and keyboard plus mouse input".to_string(),
             scale_factor_override: Some(1.0),
@@ -79,15 +76,15 @@ fn main() {
         .add_plugins(DefaultPlugins)
 
         .insert_resource(Camera::new(320.0, 320.0, CAMERA_HIGHEST_LEVEL, SCREEN_HEIGHT, SCREEN_WIDTH))
-        .insert_resource(Cursor::new("img/ui/mouse_gfx.png".to_string(), false, Entity::new(0)))
+        .insert_resource(Cursor::new("img/ui/mouse_gfx.png".to_string(), false, Entity::from_raw(0)))
         .insert_resource(Level::new(LevelBiome::Marsh))
         .insert_resource(Text::new(32.0, Color::WHITE, &text_content))
 
-        .add_startup_system(setup.system())
+        .add_startup_system(setup)
 
-        .add_system(camera_event_handler.system())
-        .add_system(keyboard_event_handler.system())
-        .add_system(mouse_event_handler.system())
+        .add_system(camera_event_handler)
+        .add_system(keyboard_event_handler)
+        .add_system(mouse_event_handler)
 
         .run();
 }
@@ -97,12 +94,11 @@ fn setup(mut commands: Commands,
          mut cam: ResMut<Camera>,
          mut cursor: ResMut<Cursor>,
          mut lvl: ResMut<Level>,
-         txt: ResMut<Text>,
-         mut materials: ResMut<Assets<ColorMaterial>>) {
+         txt: ResMut<Text>) {
 
     cam.start(&mut commands);
-    cursor.render(&mut commands, &asset_server, &mut materials);
-    lvl.render(&mut commands, &asset_server, &mut materials);
+    cursor.render(&mut commands, &asset_server);
+    lvl.render(&mut commands, &asset_server);
     txt.render("fonts/ultra_thin.ttf", &mut commands, &asset_server);
 }
 
@@ -111,7 +107,6 @@ fn keyboard_event_handler(mut commands: Commands,
                           mut event_reader: EventReader<KeyboardInput>,
                           mut cursor: ResMut<Cursor>,
                           mut lvl: ResMut<Level>,
-                          mut materials: ResMut<Assets<ColorMaterial>>,
                           mut windows: ResMut<Windows>) {
 
     for event in event_reader.iter() {
@@ -149,7 +144,7 @@ fn keyboard_event_handler(mut commands: Commands,
                                 lvl.change(LevelBiome::Desert);
                             },
                         };
-                        lvl.render(&mut commands, &asset_server, &mut materials);
+                        lvl.render(&mut commands, &asset_server);
                     },
 
                     // randomize tiles
@@ -171,7 +166,7 @@ fn keyboard_event_handler(mut commands: Commands,
                                 lvl.change(LevelBiome::Snow);
                             },
                         };
-                        lvl.render(&mut commands, &asset_server, &mut materials);
+                        lvl.render(&mut commands, &asset_server);
                     },
 
                     Some(Key3) => {
@@ -195,7 +190,7 @@ fn keyboard_event_handler(mut commands: Commands,
 
                     // restore the mouse cursor once the camera stops
                     Some(Up) | Some(W) | Some(Down) | Some(S) | Some(Right) | Some(D) | Some(Left) | Some(A) => {
-                        cursor.render(&mut commands, &asset_server, &mut materials);
+                        cursor.render(&mut commands, &asset_server);
                     },
 
                     _ => (),
