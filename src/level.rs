@@ -50,12 +50,28 @@ impl Level {
             }
         }
 
-        // generate 30 to 40 random decals
-        let decal_amount = rng.gen_range(30..40);
+        // generate 35 to 45 random decals
+        let decal_amount = rng.gen_range(35..45);
         for _ in 0..decal_amount {
 
             let x = rng.gen_range(0..22);
             let y = rng.gen_range(0..22);
+
+            // some very basic logic to skip decals that exists in the same (x,y)
+            let mut overlapping_decal = false;
+            for d in decals.iter_mut() {
+
+                let given_x = d.get_x();
+                let given_y = d.get_y();
+
+                if x == given_x && y == given_y {
+                    overlapping_decal = true;
+                    break;
+                }
+            }
+            if overlapping_decal {
+                continue
+            }
 
             let random_decal_type = rng.gen_range(0..decal_types.len());
 
@@ -100,6 +116,7 @@ impl Level {
                 decal_types = vec![
                     "bones_".to_string(),
                     "cactus_".to_string(),
+                    "dead_vegetation_".to_string(),
                     "rock_".to_string(),
                 ];
                 "img/desert/"
