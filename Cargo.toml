@@ -1,6 +1,6 @@
 [package]
 name = "bevy-example"
-version = "1.0.2"
+version = "1.0.3"
 authors = ["Robert Bisewski <contact@ibiscybernetics.com>"]
 edition = "2021"
 rust-version = "1.58"
@@ -18,5 +18,5 @@ codegen-units = 16
 rpath = false
 
 [dependencies]
-bevy = "0.6.0"
-rand = "0.8.4"
+bevy = "0.6.1"
+rand = "0.8.5"

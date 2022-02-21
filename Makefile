@@ -37,7 +37,7 @@ run:
 	@RUSTFLAGS="${FLAGS}" cargo run --release
 
 lint:
-	@cargo clippy
+	@cargo clippy -- -A clippy::too_many_arguments
 
 strip:
 	@strip target/debug/bevy-example &> /dev/null | :

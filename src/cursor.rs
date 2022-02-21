@@ -1,3 +1,5 @@
+use bevy::input::ElementState;
+use bevy::input::mouse::MouseButtonInput;
 use bevy::prelude::{
     AssetServer,
     Commands,
@@ -10,10 +12,11 @@ use bevy::prelude::{
     ResMut,
     SpriteBundle,
     Transform,
-    With,
+    With, MouseButton,
 };
 
 use crate::camera::Camera;
+use crate::menu::Menu;
 use crate::constants::Z_VALUE_CURSOR;
 
 #[derive(Component)]
@@ -29,8 +32,8 @@ pub struct Cursor {
 
 impl Cursor {
 
-    pub fn new(img: String, initialized: bool, entity: Entity) -> Cursor {
-        Cursor { img, initialized, entity, x: 0.0, y: 0.0 }
+    pub fn new(img: String) -> Cursor {
+        Cursor { img, initialized: false, entity: Entity::from_raw(0), x: 0.0, y: 0.0 }
     }
 
     pub fn render(&mut self, 
@@ -63,12 +66,16 @@ impl Cursor {
     }
 }
 
-pub fn mouse_event_handler(mut event_reader: EventReader<CursorMoved>,
+pub fn mouse_event_handler(mut cursor_moved: EventReader<CursorMoved>,
+                           mut cursor_clicked: EventReader<MouseButtonInput>,
+                           mut commands: Commands,
+                           asset_server: Res<AssetServer>,
                            mut cursor: ResMut<Cursor>,
                            cam: Res<Camera>,
+                           mut menu: ResMut<Menu>,
                            mut positions: Query<&mut Transform, With<CursorEntity>>) {
 
-    for event in event_reader.iter() {
+    for event in cursor_moved.iter() {
         for mut transform in positions.iter_mut() {
 
             // record the cursor's position on the screen
@@ -78,6 +85,15 @@ pub fn mouse_event_handler(mut event_reader: EventReader<CursorMoved>,
             // move the mouse graphic to the desired location
             transform.translation.x = event.position.x + cam.get_x() - (cam.screen_width()/2.0);
             transform.translation.y = event.position.y + cam.get_y() - (cam.screen_height()/2.0);
+
+            // run menu hover animations
+            menu.hover_events(&mut commands, &asset_server, cursor.x, cursor.y)
+        }
+    }
+
+    for event in cursor_clicked.iter() {
+        if event.state == ElementState::Pressed && event.button == MouseButton::Left {
+            menu.click_events(&mut commands, cursor.x, cursor.y);
         }
     }
 }
