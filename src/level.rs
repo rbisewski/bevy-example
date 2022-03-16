@@ -20,6 +20,7 @@ pub enum LevelBiome {
     Ice,
     Marsh,
     Snow,
+    Space,
 }
 
 pub struct Level {
@@ -154,6 +155,14 @@ impl Level {
                     "rock_".to_string(),
                 ];
                 "img/snow/"
+            },
+            LevelBiome::Space => {
+                biome_max = 14;
+                decal_types = vec![
+                    "asteroid_".to_string(),
+                    "planet_".to_string(),
+                ];
+                "img/space/"
             },
         };
 

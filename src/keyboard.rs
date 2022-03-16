@@ -80,6 +80,9 @@ pub fn keyboard_event_handler(mut commands: Commands,
                                 lvl.change(LevelBiome::Snow);
                             },
                             LevelBiome::Snow => {
+                                lvl.change(LevelBiome::Space);
+                            },
+                            LevelBiome::Space => {
                                 lvl.change(LevelBiome::Desert);
                             },
                         };
@@ -103,6 +106,9 @@ pub fn keyboard_event_handler(mut commands: Commands,
                             },
                             LevelBiome::Snow => {
                                 lvl.change(LevelBiome::Snow);
+                            },
+                            LevelBiome::Space => {
+                                lvl.change(LevelBiome::Space);
                             },
                         };
                         lvl.render(&mut commands, &asset_server);
