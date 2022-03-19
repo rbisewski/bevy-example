@@ -7,10 +7,14 @@ use bevy::prelude::{
     ResMut,
     SpriteBundle,
     Transform,
+    Windows,
 };
+use bevy::window::WindowMode;
 
 //static MODE_DEFAULT: i8 = 0;
 static MODE_CONTINUE: i8 = 1;
+static MODE_OPTIONS: i8 = 2;
+static MODE_QUIT: i8 = 3;
 
 use crate::camera::Camera;
 use crate::constants::Z_VALUE_MENU;
@@ -25,39 +29,42 @@ pub struct Menu {
     initialized: bool,
     entity: Entity,
     mode: i8,
+    borderless: bool,
     menu_elements: Vec<UI>,
 }
 
 impl Menu {
 
     pub fn new(img: String) -> Menu {
-        Menu { img, initialized: false, entity: Entity::from_raw(0), mode: MODE_CONTINUE, menu_elements: vec![] }
+        Menu { img, 
+               initialized: false,
+               entity: Entity::from_raw(0),
+               mode: MODE_CONTINUE,
+               borderless: false,
+               menu_elements: vec![] }
     }
 
     pub fn render(&mut self,
                   commands: &mut Commands,
                   asset_server: &Res<AssetServer>,
-                  camera: &ResMut<Camera>) {
+                  camera: &ResMut<Camera>,
+                  windows: &ResMut<Windows>) {
 
         // as a precaution, clear away all existing elements, if any
         self.hide(commands);
 
-        self.entity = commands
-                         .spawn()
-                         .insert_bundle(SpriteBundle {
-                             texture: asset_server.load(self.img.as_str()),
-                             transform: Transform::from_xyz(camera.get_x(), camera.get_y(), Z_VALUE_MENU),
-                             ..Default::default()
-                         })
-                         .insert(MenuEntity)
-                         .id();
-
-        self.initialized = true;
-
         match self.mode {
+            //
+            // MODE_DEFAULT
+            //
             0 => {
             },
+            //
+            // MODE_CONTINUE
+            //
             1 => {
+                self.img = String::from("img/ui/menu_main.png");
+
                 let mut continue_button = UI::new(String::from("Continue"),
                                                       String::from("img/ui/menu_button_continue.png"),
                                                  String::from("img/ui/menu_button_continue_hover.png"),
@@ -115,9 +122,134 @@ impl Menu {
 
                 self.menu_elements = vec![continue_button, save_button, load_button, options_button, quit_button];
             },
+            //
+            // MODE_OPTIONS
+            //
+            2 => {
+                self.img = String::from("img/ui/menu_options.png");
+
+                let unchecked_box = "img/ui/menu_checkbox_false.png";
+                let unchecked_box_hover = "img/ui/menu_checkbox_false_hover.png";
+                let checked_box = "img/ui/menu_checkbox_true.png";
+                let checked_box_hover = "img/ui/menu_checkbox_true_hover.png";
+
+                let ui_scale = match windows.get_primary() {
+                    Some(w) => {
+                        match w.scale_factor_override() {
+                            Some(s) => s.round() as i8,
+                            _ => 1,
+                        }
+                    },
+                    _ => 1,
+                };
+
+                let mut back_button = UI::new(String::from("Back"),
+                                                  String::from("img/ui/menu_button_back.png"),
+                                             String::from("img/ui/menu_button_back_hover.png"),
+                                                16.,
+                                                 66.);
+                back_button.render(commands,
+                                   asset_server,
+                                   camera.get_x(),
+                                   camera.get_y()+38.0,
+                                   Z_VALUE_MENU_ELEMENTS);
+
+                let mut button_gfx = if ui_scale == 2 { checked_box } else { unchecked_box };
+                let mut button_hover_gfx = if ui_scale == 2 { checked_box_hover } else { unchecked_box_hover };
+                let mut four_k_mode_button = UI::new(String::from("4K Mode"),
+                                                         button_gfx.to_string(),
+                                                         button_hover_gfx.to_string(),
+                                                       16.,
+                                                        17.);
+
+                four_k_mode_button.render(commands,
+                                   asset_server,
+                                   camera.get_x()+43.5,
+                                   camera.get_y()+11.,
+                                   Z_VALUE_MENU_ELEMENTS);
+
+                button_gfx = if self.borderless { checked_box } else { unchecked_box };
+                button_hover_gfx = if self.borderless { checked_box_hover } else { unchecked_box_hover };
+                let mut borderless_button = UI::new(String::from("Borderless"),
+                                                        button_gfx.to_string(),
+                                                   button_hover_gfx.to_string(),
+                                                      16.,
+                                                       17.);
+
+                borderless_button.render(commands,
+                                   asset_server,
+                                   camera.get_x()+43.5,
+                                   camera.get_y()-9.,
+                                   Z_VALUE_MENU_ELEMENTS);
+
+                let is_fullscreen = match windows.get_primary() {
+                    Some(w) => {
+                        matches!(w.mode(), WindowMode::Fullscreen | WindowMode::BorderlessFullscreen)
+                    },
+                    _ => false,
+                };
+
+                button_gfx = if is_fullscreen { checked_box } else { unchecked_box };
+                button_hover_gfx = if is_fullscreen { checked_box_hover } else { unchecked_box_hover };
+                let mut fullscreen_button = UI::new(String::from("Fullscreen"),
+                                                        button_gfx.to_string(),
+                                                   button_hover_gfx.to_string(),
+                                                       16.,
+                                                        17.);
+
+                fullscreen_button.render(commands,
+                                   asset_server,
+                                   camera.get_x()+43.5,
+                                   camera.get_y()-29.,
+                                   Z_VALUE_MENU_ELEMENTS);
+
+                self.menu_elements = vec![back_button, four_k_mode_button, borderless_button, fullscreen_button];
+            },
+            //
+            // MODE_QUIT
+            //
+            3 => {
+                self.img = String::from("img/ui/menu_quit.png");
+
+                let mut yes_quit_button = UI::new(String::from("Yes, quit"),
+                                                      String::from("img/ui/menu_button_yes_quit.png"),
+                                                 String::from("img/ui/menu_button_yes_quit_hover.png"),
+                                                    16.,
+                                                     66.);
+                yes_quit_button.render(commands,
+                                      asset_server,
+                                      camera.get_x(),
+                                      camera.get_y()-12.,
+                                      Z_VALUE_MENU_ELEMENTS);
+
+                let mut no_stay_button = UI::new(String::from("No, stay"),
+                                                     String::from("img/ui/menu_button_no_stay.png"),
+                                                String::from("img/ui/menu_button_no_stay_hover.png"),
+                                                   16.,
+                                                    66.);
+                no_stay_button.render(commands,
+                                   asset_server,
+                                   camera.get_x(),
+                                   camera.get_y()-36.,
+                                   Z_VALUE_MENU_ELEMENTS);
+
+                self.menu_elements = vec![yes_quit_button, no_stay_button];
+            },
             _ => {
             }
         }
+
+        self.entity = commands
+                         .spawn()
+                         .insert_bundle(SpriteBundle {
+                             texture: asset_server.load(self.img.as_str()),
+                             transform: Transform::from_xyz(camera.get_x(), camera.get_y(), Z_VALUE_MENU),
+                             ..Default::default()
+                         })
+                         .insert(MenuEntity)
+                         .id();
+
+        self.initialized = true;
     }
 
     pub fn hide(&mut self, commands: &mut Commands) {
@@ -135,7 +267,18 @@ impl Menu {
         self.menu_elements.clear();
     }
 
-    pub fn visible(&mut self) -> bool {
+    pub fn is_borderless(&self) -> bool {
+        self.borderless
+    }
+
+    pub fn set_mode(&mut self, mode: i8) {
+        self.mode = mode;
+    }
+    pub fn reset_mode(&mut self) {
+        self.mode = MODE_CONTINUE;
+    }
+
+    pub fn visible(&self) -> bool {
         self.initialized
     }
 
@@ -157,13 +300,19 @@ impl Menu {
         }
     }
 
-    pub fn click_events(&mut self, commands: &mut Commands, mouse_x: f32, mouse_y: f32) {
+    pub fn click_events(&mut self,
+                        commands: &mut Commands,
+                        asset_server: &Res<AssetServer>,
+                        cam: &ResMut<Camera>,
+                        windows: &ResMut<Windows>,
+                        mouse_x: f32,
+                        mouse_y: f32) -> String {
+
         if !self.visible() {
-            return
+            return String::from("")
         }
 
         let mut name = String::from("");
-
         for element in self.menu_elements.iter_mut() {
             if !element.mouse_is_hovering(mouse_x, mouse_y) {
                 continue
@@ -176,12 +325,35 @@ impl Menu {
             "Continue" => {
                 self.hide(commands);
             },
+            "Options" => {
+                self.set_mode(MODE_OPTIONS);
+                self.render(commands, asset_server, cam, windows);
+            },
             "Quit" => {
+                self.set_mode(MODE_QUIT);
+                self.render(commands, asset_server, cam, windows);
+            },
+            "Yes, quit" => {
                 std::process::exit(0);
             },
+            "Back" | "No, stay" => {
+                self.reset_mode();
+                self.render(commands, asset_server, cam, windows);
+            },
+            "4K Mode" => {
+                return String::from("toggle_ui_scale");
+            },
+            "Borderless" => {
+                self.borderless = !self.borderless;
+                self.render(commands, asset_server, cam, windows);
+            },
+            "Fullscreen" => {
+                return String::from("fullscreen");
+            },
             _ => {
-
             }
         }
+
+        String::from("")
     }
 }

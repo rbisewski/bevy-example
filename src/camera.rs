@@ -85,7 +85,7 @@ impl Camera {
 }
 
 pub fn camera_event_handler(mut cam: ResMut<Camera>,
-                            mut menu: ResMut<Menu>,
+                            menu: ResMut<Menu>,
                             mut event_reader: EventReader<KeyboardInput>,
                             mut positions: Query<&mut Transform, With<CameraEntity>>) {
 

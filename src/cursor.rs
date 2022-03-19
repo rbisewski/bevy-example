@@ -12,8 +12,11 @@ use bevy::prelude::{
     ResMut,
     SpriteBundle,
     Transform,
-    With, MouseButton,
+    Windows,
+    With,
+    MouseButton,
 };
+use bevy::window::WindowMode;
 
 use crate::camera::Camera;
 use crate::menu::Menu;
@@ -33,7 +36,7 @@ pub struct Cursor {
 impl Cursor {
 
     pub fn new(img: String) -> Cursor {
-        Cursor { img, initialized: false, entity: Entity::from_raw(0), x: 0.0, y: 0.0 }
+        Cursor { img, initialized: false, entity: Entity::from_raw(0), x: 0., y: 0. }
     }
 
     pub fn render(&mut self, 
@@ -71,9 +74,10 @@ pub fn mouse_event_handler(mut cursor_moved: EventReader<CursorMoved>,
                            mut commands: Commands,
                            asset_server: Res<AssetServer>,
                            mut cursor: ResMut<Cursor>,
-                           cam: Res<Camera>,
+                           cam: ResMut<Camera>,
                            mut menu: ResMut<Menu>,
-                           mut positions: Query<&mut Transform, With<CursorEntity>>) {
+                           mut positions: Query<&mut Transform, With<CursorEntity>>,
+                           mut windows: ResMut<Windows>) {
 
     for event in cursor_moved.iter() {
         for mut transform in positions.iter_mut() {
@@ -93,7 +97,50 @@ pub fn mouse_event_handler(mut cursor_moved: EventReader<CursorMoved>,
 
     for event in cursor_clicked.iter() {
         if event.state == ElementState::Pressed && event.button == MouseButton::Left {
-            menu.click_events(&mut commands, cursor.x, cursor.y);
+            let response = menu.click_events(&mut commands,
+                                                    &asset_server,
+                                                    &cam, 
+                                                    &windows, 
+                                                    cursor.x, 
+                                                    cursor.y);
+
+            if response.as_str() == "toggle_ui_scale" {
+                let window = match windows.get_primary_mut() {
+                    Some(w) => w,
+                    _ => break
+                };
+                window.set_scale_factor_override(
+                    window
+                        .scale_factor_override()
+                        .map(|n| ((n % 2.) + 1.))
+                );
+                menu.render(&mut commands, &asset_server, &cam, &windows);
+
+
+            } else if response.as_str() == "borderless" {
+                menu.render(&mut commands, &asset_server, &cam, &windows);
+
+            } else if response.as_str() == "fullscreen" {
+                let window = match windows.get_primary_mut() {
+                    Some(w) => w,
+                    _ => break
+                };
+                match window.mode() {
+                    WindowMode::Windowed => {
+                        if menu.is_borderless() {
+                            window.set_mode(WindowMode::BorderlessFullscreen);
+                        } else {
+                            window.set_mode(WindowMode::Fullscreen);
+                        }
+                    },
+                    WindowMode::BorderlessFullscreen | WindowMode::Fullscreen => {
+                        window.set_mode(WindowMode::Windowed);
+                    },
+                    _ => {
+                    },
+                };
+                menu.render(&mut commands, &asset_server, &cam, &windows);
+            }
         }
     }
 }

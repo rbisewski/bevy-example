@@ -33,6 +33,7 @@ use bevy::prelude::{
     Res,
     ResMut,
     WindowDescriptor,
+    Windows,
 };
 
 const CAMERA_HIGHEST_LEVEL: f32 = 1.0;
@@ -45,7 +46,6 @@ fn main() {
     let text_content = [
         " Press {1} to change the biome.\n",
         " Press {2} to randomize the tiles.\n",
-        " Press {3} to enable or disable 4K resolution.\n",
         " Press {W,A,S,D} or the arrow keys to navigate.\n",
         " Press {ESC} to open and close the menu.",
     ].concat();
@@ -85,10 +85,11 @@ fn setup(mut commands: Commands,
          mut cursor: ResMut<Cursor>,
          mut menu: ResMut<Menu>,
          mut lvl: ResMut<Level>,
-         txt: ResMut<Text>) {
+         txt: ResMut<Text>,
+         windows: ResMut<Windows>) {
 
     cam.start(&mut commands);
-    menu.render(&mut commands, &asset_server, &cam);
+    menu.render(&mut commands, &asset_server, &cam, &windows);
     cursor.render(&mut commands, &asset_server);
     lvl.render(&mut commands, &asset_server);
     txt.render("fonts/ultra_thin.ttf", &mut commands, &asset_server);

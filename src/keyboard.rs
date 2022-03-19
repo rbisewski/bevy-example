@@ -13,7 +13,6 @@ use bevy::{
     input::ElementState::Released,
     input::keyboard::KeyCode::Key1,
     input::keyboard::KeyCode::Key2,
-    input::keyboard::KeyCode::Key3,
     input::keyboard::KeyCode::W,
     input::keyboard::KeyCode::S,
     input::keyboard::KeyCode::A,
@@ -37,7 +36,7 @@ pub fn keyboard_event_handler(mut commands: Commands,
                           mut cursor: ResMut<Cursor>,
                           mut menu: ResMut<Menu>,
                           mut lvl: ResMut<Level>,
-                          mut windows: ResMut<Windows>) {
+                          windows: ResMut<Windows>) {
 
     for event in event_reader.iter() {
 
@@ -52,7 +51,8 @@ pub fn keyboard_event_handler(mut commands: Commands,
                                 menu.hide(&mut commands);
                             },
                             false => {
-                                menu.render(&mut commands, &asset_server, &cam);
+                                menu.reset_mode();
+                                menu.render(&mut commands, &asset_server, &cam, &windows);
                             }
                         }
                     },
@@ -112,18 +112,6 @@ pub fn keyboard_event_handler(mut commands: Commands,
                             },
                         };
                         lvl.render(&mut commands, &asset_server);
-                    },
-
-                    Some(Key3) => {
-                        let window = match windows.get_primary_mut() {
-                            Some(w) => w,
-                            _ => break
-                        };
-                        window.set_scale_factor_override(
-                            window
-                                .scale_factor_override()
-                                .map(|n| ((n % 2.) + 1.))
-                        );
                     },
 
                     _ => (),
