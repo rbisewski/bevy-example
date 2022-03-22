@@ -24,12 +24,13 @@ pub struct UI {
     x: f32,
     y: f32,
     z: f32,
+    xoffset: f32,
 }
 
 impl UI {
 
     pub fn new(name: String, img: String, img_hover: String, height: f32, width: f32) -> UI {
-        UI { name, img, img_hover, initialized: false, hovered: false, entity: Entity::from_raw(0), entity_hover: Entity::from_raw(0), height, width, x: 0., y: 0., z: 0.}
+        UI { name, img, img_hover, initialized: false, hovered: false, entity: Entity::from_raw(0), entity_hover: Entity::from_raw(0), height, width, x: 0., y: 0., z: 0., xoffset: 0.}
     }
 
     pub fn render(&mut self, commands: &mut Commands, asset_server: &Res<AssetServer>, x: f32, y: f32, z: f32) {
@@ -39,7 +40,7 @@ impl UI {
             self.entity = commands.spawn()
                                   .insert_bundle(SpriteBundle {
                                       texture: asset_server.load(self.img.as_str()),
-                                      transform: Transform::from_xyz(x, y, z),
+                                      transform: Transform::from_xyz(x+self.xoffset, y, z),
                                       ..Default::default()
                                   })
                                   .insert(UIEntity)
@@ -67,7 +68,7 @@ impl UI {
         commands.entity(self.entity_hover)
                 .insert_bundle(SpriteBundle {
                     texture: asset_server.load(self.img_hover.as_str()),
-                    transform: Transform::from_xyz(x, y, z+0.01),
+                    transform: Transform::from_xyz(x+self.xoffset, y, z+0.01),
                     ..Default::default()
                 });
         self.hovered = true;
@@ -90,23 +91,27 @@ impl UI {
         self.z = 0.;
     }
 
-    pub fn get_name(&mut self) -> &str {
+    pub fn get_name(&self) -> &str {
         self.name.as_str()
     }
 
-    pub fn get_x(&mut self) -> f32 {
+    pub fn get_x(&self) -> f32 {
         self.x
     }
 
-    pub fn get_y(&mut self) -> f32 {
+    pub fn get_y(&self) -> f32 {
         self.y
     }
 
-    pub fn get_z(&mut self) -> f32 {
+    pub fn get_z(&self) -> f32 {
         self.z
     }
 
-    pub fn mouse_is_hovering(&mut self, x: f32, y: f32) -> bool {
+    pub fn set_xoffset(&mut self, x: f32) {
+        self.xoffset = x;
+    }
+
+    pub fn mouse_is_hovering(&self, x: f32, y: f32) -> bool {
         let mouse_gfx_height: f32 = 16.;
         let mouse_gfx_width: f32 = 28.;
 

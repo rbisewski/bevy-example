@@ -19,12 +19,15 @@ mod tile;
 mod level;
 use level::{Level, LevelBiome};
 
+mod options;
+use options::get_options;
+
 mod text;
 use text::Text;
 
 mod ui;
 
-use bevy::prelude::{
+use bevy::{prelude::{
     App,
     AssetServer,
     Color,
@@ -33,8 +36,7 @@ use bevy::prelude::{
     Res,
     ResMut,
     WindowDescriptor,
-    Windows,
-};
+}, window::WindowMode};
 
 const CAMERA_HIGHEST_LEVEL: f32 = 1.0;
 
@@ -50,15 +52,26 @@ fn main() {
         " Press {ESC} to open and close the menu.",
     ].concat();
 
+    let current_options = get_options();
+
+    let mode: WindowMode = if current_options.fullscreen && current_options.borderless { WindowMode::BorderlessFullscreen } 
+                           else if current_options.fullscreen { WindowMode::Fullscreen }
+                           else { WindowMode::Windowed };
+    let scale_factor_override = match current_options.four_k_mode {
+        true => Some(2.0),
+        false => Some(1.0)
+    };
+
     App::new()
         .insert_resource(WindowDescriptor {
             title: "Bevy engine example using tiles, camera, and keyboard plus mouse input".to_string(),
-            scale_factor_override: Some(1.0),
+            scale_factor_override,
             width: SCREEN_WIDTH,
             height: SCREEN_HEIGHT,
             resizable: false,
             cursor_visible: false,
-            vsync: true,
+            mode,
+            vsync: current_options.vsync,
             ..Default::default()
         })
 
@@ -85,11 +98,10 @@ fn setup(mut commands: Commands,
          mut cursor: ResMut<Cursor>,
          mut menu: ResMut<Menu>,
          mut lvl: ResMut<Level>,
-         txt: ResMut<Text>,
-         windows: ResMut<Windows>) {
+         txt: ResMut<Text>) {
 
     cam.start(&mut commands);
-    menu.render(&mut commands, &asset_server, &cam, &windows);
+    menu.render(&mut commands, &asset_server, &cam);
     cursor.render(&mut commands, &asset_server);
     lvl.render(&mut commands, &asset_server);
     txt.render("fonts/ultra_thin.ttf", &mut commands, &asset_server);

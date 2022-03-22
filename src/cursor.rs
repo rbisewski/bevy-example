@@ -21,6 +21,7 @@ use bevy::window::WindowMode;
 use crate::camera::Camera;
 use crate::menu::Menu;
 use crate::constants::Z_VALUE_CURSOR;
+use crate::options::toggle_option;
 
 #[derive(Component)]
 pub struct CursorEntity;
@@ -83,12 +84,12 @@ pub fn mouse_event_handler(mut cursor_moved: EventReader<CursorMoved>,
         for mut transform in positions.iter_mut() {
 
             // record the cursor's position on the screen
-            cursor.x = event.position.x + cam.get_x() - (cam.screen_width()/2.0);
-            cursor.y = event.position.y + cam.get_y() - (cam.screen_height()/2.0);
+            cursor.x = event.position.x + cam.get_x() - (cam.screen_width()/2.);
+            cursor.y = event.position.y + cam.get_y() - (cam.screen_height()/2.);
 
             // move the mouse graphic to the desired location
-            transform.translation.x = event.position.x + cam.get_x() - (cam.screen_width()/2.0);
-            transform.translation.y = event.position.y + cam.get_y() - (cam.screen_height()/2.0);
+            transform.translation.x = cursor.x;
+            transform.translation.y = cursor.y;
 
             // run menu hover animations
             menu.hover_events(&mut commands, &asset_server, cursor.x, cursor.y)
@@ -100,11 +101,10 @@ pub fn mouse_event_handler(mut cursor_moved: EventReader<CursorMoved>,
             let response = menu.click_events(&mut commands,
                                                     &asset_server,
                                                     &cam, 
-                                                    &windows, 
                                                     cursor.x, 
                                                     cursor.y);
 
-            if response.as_str() == "toggle_ui_scale" {
+            if response.as_str() == "4k_mode" {
                 let window = match windows.get_primary_mut() {
                     Some(w) => w,
                     _ => break
@@ -114,11 +114,22 @@ pub fn mouse_event_handler(mut cursor_moved: EventReader<CursorMoved>,
                         .scale_factor_override()
                         .map(|n| ((n % 2.) + 1.))
                 );
-                menu.render(&mut commands, &asset_server, &cam, &windows);
+                toggle_option("4K Mode".to_string());
+                menu.render(&mut commands, &asset_server, &cam);
 
 
             } else if response.as_str() == "borderless" {
-                menu.render(&mut commands, &asset_server, &cam, &windows);
+                toggle_option("Borderless".to_string());
+                menu.render(&mut commands, &asset_server, &cam);
+
+            } else if response.as_str() == "vsync" {
+                let window = match windows.get_primary_mut() {
+                    Some(w) => w,
+                    _ => break
+                };
+                window.set_vsync(!window.vsync());
+                toggle_option("V-sync".to_string());
+                menu.render(&mut commands, &asset_server, &cam);
 
             } else if response.as_str() == "fullscreen" {
                 let window = match windows.get_primary_mut() {
@@ -139,7 +150,8 @@ pub fn mouse_event_handler(mut cursor_moved: EventReader<CursorMoved>,
                     _ => {
                     },
                 };
-                menu.render(&mut commands, &asset_server, &cam, &windows);
+                toggle_option("Fullscreen".to_string());
+                menu.render(&mut commands, &asset_server, &cam);
             }
         }
     }

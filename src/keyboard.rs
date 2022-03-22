@@ -4,7 +4,6 @@ use bevy::prelude::{
     EventReader,
     Res,
     ResMut,
-    Windows,
 };
 
 use bevy::{
@@ -35,8 +34,7 @@ pub fn keyboard_event_handler(mut commands: Commands,
                           cam: ResMut<Camera>,
                           mut cursor: ResMut<Cursor>,
                           mut menu: ResMut<Menu>,
-                          mut lvl: ResMut<Level>,
-                          windows: ResMut<Windows>) {
+                          mut lvl: ResMut<Level>) {
 
     for event in event_reader.iter() {
 
@@ -52,7 +50,7 @@ pub fn keyboard_event_handler(mut commands: Commands,
                             },
                             false => {
                                 menu.reset_mode();
-                                menu.render(&mut commands, &asset_server, &cam, &windows);
+                                menu.render(&mut commands, &asset_server, &cam);
                             }
                         }
                     },

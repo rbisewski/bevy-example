@@ -7,9 +7,7 @@ use bevy::prelude::{
     ResMut,
     SpriteBundle,
     Transform,
-    Windows,
 };
-use bevy::window::WindowMode;
 
 //static MODE_DEFAULT: i8 = 0;
 static MODE_CONTINUE: i8 = 1;
@@ -19,6 +17,7 @@ static MODE_QUIT: i8 = 3;
 use crate::camera::Camera;
 use crate::constants::Z_VALUE_MENU;
 use crate::constants::Z_VALUE_MENU_ELEMENTS;
+use crate::options::get_options;
 use crate::ui::UI;
 
 #[derive(Component)]
@@ -47,8 +46,7 @@ impl Menu {
     pub fn render(&mut self,
                   commands: &mut Commands,
                   asset_server: &Res<AssetServer>,
-                  camera: &ResMut<Camera>,
-                  windows: &ResMut<Windows>) {
+                  camera: &ResMut<Camera>) {
 
         // as a precaution, clear away all existing elements, if any
         self.hide(commands);
@@ -73,7 +71,7 @@ impl Menu {
                 continue_button.render(commands,
                                        asset_server,
                                        camera.get_x(),
-                                       camera.get_y()+44.0,
+                                       camera.get_y()+44.,
                                        Z_VALUE_MENU_ELEMENTS);
 
                 let mut save_button = UI::new(String::from("Save"),
@@ -117,7 +115,7 @@ impl Menu {
                 quit_button.render(commands,
                                    asset_server,
                                    camera.get_x(),
-                                   camera.get_y()-52.0,
+                                   camera.get_y()-52.,
                                    Z_VALUE_MENU_ELEMENTS);
 
                 self.menu_elements = vec![continue_button, save_button, load_button, options_button, quit_button];
@@ -133,15 +131,7 @@ impl Menu {
                 let checked_box = "img/ui/menu_checkbox_true.png";
                 let checked_box_hover = "img/ui/menu_checkbox_true_hover.png";
 
-                let ui_scale = match windows.get_primary() {
-                    Some(w) => {
-                        match w.scale_factor_override() {
-                            Some(s) => s.round() as i8,
-                            _ => 1,
-                        }
-                    },
-                    _ => 1,
-                };
+                let options = get_options();
 
                 let mut back_button = UI::new(String::from("Back"),
                                                   String::from("img/ui/menu_button_back.png"),
@@ -151,59 +141,70 @@ impl Menu {
                 back_button.render(commands,
                                    asset_server,
                                    camera.get_x(),
-                                   camera.get_y()+38.0,
+                                   camera.get_y()+44.,
                                    Z_VALUE_MENU_ELEMENTS);
 
-                let mut button_gfx = if ui_scale == 2 { checked_box } else { unchecked_box };
-                let mut button_hover_gfx = if ui_scale == 2 { checked_box_hover } else { unchecked_box_hover };
+                let mut button_gfx = if options.four_k_mode { checked_box } else { unchecked_box };
+                let mut button_hover_gfx = if options.four_k_mode { checked_box_hover } else { unchecked_box_hover };
                 let mut four_k_mode_button = UI::new(String::from("4K Mode"),
                                                          button_gfx.to_string(),
                                                          button_hover_gfx.to_string(),
                                                        16.,
                                                         17.);
+                four_k_mode_button.set_xoffset(-24.);
 
                 four_k_mode_button.render(commands,
                                    asset_server,
-                                   camera.get_x()+43.5,
-                                   camera.get_y()+11.,
+                                   camera.get_x()+67.5,
+                                   camera.get_y()+17.5,
                                    Z_VALUE_MENU_ELEMENTS);
 
-                button_gfx = if self.borderless { checked_box } else { unchecked_box };
-                button_hover_gfx = if self.borderless { checked_box_hover } else { unchecked_box_hover };
+                button_gfx = if options.borderless { checked_box } else { unchecked_box };
+                button_hover_gfx = if options.borderless { checked_box_hover } else { unchecked_box_hover };
                 let mut borderless_button = UI::new(String::from("Borderless"),
                                                         button_gfx.to_string(),
                                                    button_hover_gfx.to_string(),
                                                       16.,
                                                        17.);
+                borderless_button.set_xoffset(-24.);
 
                 borderless_button.render(commands,
                                    asset_server,
-                                   camera.get_x()+43.5,
-                                   camera.get_y()-9.,
+                                   camera.get_x()+67.5,
+                                   camera.get_y()-2.5,
                                    Z_VALUE_MENU_ELEMENTS);
 
-                let is_fullscreen = match windows.get_primary() {
-                    Some(w) => {
-                        matches!(w.mode(), WindowMode::Fullscreen | WindowMode::BorderlessFullscreen)
-                    },
-                    _ => false,
-                };
+                button_gfx = if options.vsync { checked_box } else { unchecked_box };
+                button_hover_gfx = if options.vsync { checked_box_hover } else { unchecked_box_hover };
+                let mut vsync_button = UI::new(String::from("V-sync"),
+                                                        button_gfx.to_string(),
+                                                   button_hover_gfx.to_string(),
+                                                       16.,
+                                                        17.);
+                vsync_button.set_xoffset(-24.);
 
-                button_gfx = if is_fullscreen { checked_box } else { unchecked_box };
-                button_hover_gfx = if is_fullscreen { checked_box_hover } else { unchecked_box_hover };
+                vsync_button.render(commands,
+                                   asset_server,
+                                   camera.get_x()+67.5,
+                                   camera.get_y()-22.5,
+                                   Z_VALUE_MENU_ELEMENTS);
+
+                button_gfx = if options.fullscreen { checked_box } else { unchecked_box };
+                button_hover_gfx = if options.fullscreen { checked_box_hover } else { unchecked_box_hover };
                 let mut fullscreen_button = UI::new(String::from("Fullscreen"),
                                                         button_gfx.to_string(),
                                                    button_hover_gfx.to_string(),
                                                        16.,
                                                         17.);
+                fullscreen_button.set_xoffset(-24.);
 
                 fullscreen_button.render(commands,
                                    asset_server,
-                                   camera.get_x()+43.5,
-                                   camera.get_y()-29.,
+                                   camera.get_x()+67.5,
+                                   camera.get_y()-42.5,
                                    Z_VALUE_MENU_ELEMENTS);
 
-                self.menu_elements = vec![back_button, four_k_mode_button, borderless_button, fullscreen_button];
+                self.menu_elements = vec![back_button, four_k_mode_button, borderless_button, vsync_button, fullscreen_button];
             },
             //
             // MODE_QUIT
@@ -304,7 +305,6 @@ impl Menu {
                         commands: &mut Commands,
                         asset_server: &Res<AssetServer>,
                         cam: &ResMut<Camera>,
-                        windows: &ResMut<Windows>,
                         mouse_x: f32,
                         mouse_y: f32) -> String {
 
@@ -327,25 +327,27 @@ impl Menu {
             },
             "Options" => {
                 self.set_mode(MODE_OPTIONS);
-                self.render(commands, asset_server, cam, windows);
+                self.render(commands, asset_server, cam);
             },
             "Quit" => {
                 self.set_mode(MODE_QUIT);
-                self.render(commands, asset_server, cam, windows);
+                self.render(commands, asset_server, cam);
             },
             "Yes, quit" => {
                 std::process::exit(0);
             },
             "Back" | "No, stay" => {
                 self.reset_mode();
-                self.render(commands, asset_server, cam, windows);
+                self.render(commands, asset_server, cam);
             },
             "4K Mode" => {
-                return String::from("toggle_ui_scale");
+                return String::from("4k_mode");
             },
             "Borderless" => {
-                self.borderless = !self.borderless;
-                self.render(commands, asset_server, cam, windows);
+                return String::from("borderless");
+            },
+            "V-sync" => {
+                return String::from("vsync");
             },
             "Fullscreen" => {
                 return String::from("fullscreen");
