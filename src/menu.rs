@@ -27,8 +27,8 @@ pub struct Menu {
     img: String,
     initialized: bool,
     entity: Entity,
+    options_modified: bool,
     mode: i8,
-    borderless: bool,
     menu_elements: Vec<UI>,
 }
 
@@ -38,8 +38,8 @@ impl Menu {
         Menu { img, 
                initialized: false,
                entity: Entity::from_raw(0),
+               options_modified: false,
                mode: MODE_CONTINUE,
-               borderless: false,
                menu_elements: vec![] }
     }
 
@@ -133,6 +133,19 @@ impl Menu {
 
                 let options = get_options();
 
+                let mut restart_to_apply_settings = UI::new(String::from("Restart to apply settings"),
+                                                  String::from("img/ui/menu_restart_to_apply_settings.png"),
+                                             String::from(""),
+                                                73.,
+                                                 275.);
+                if self.options_modified {
+                    restart_to_apply_settings.render(commands,
+                        asset_server,
+                        camera.get_x(),
+                        camera.get_y()+124.,
+                        Z_VALUE_MENU_ELEMENTS);
+                }
+
                 let mut back_button = UI::new(String::from("Back"),
                                                   String::from("img/ui/menu_button_back.png"),
                                              String::from("img/ui/menu_button_back_hover.png"),
@@ -204,7 +217,17 @@ impl Menu {
                                    camera.get_y()-42.5,
                                    Z_VALUE_MENU_ELEMENTS);
 
-                self.menu_elements = vec![back_button, four_k_mode_button, borderless_button, vsync_button, fullscreen_button];
+                self.menu_elements = vec![
+                    back_button,
+                    four_k_mode_button,
+                    borderless_button,
+                    vsync_button,
+                    fullscreen_button
+                ];
+
+                if self.options_modified {
+                    self.menu_elements.push(restart_to_apply_settings);
+                }
             },
             //
             // MODE_QUIT
@@ -268,8 +291,8 @@ impl Menu {
         self.menu_elements.clear();
     }
 
-    pub fn is_borderless(&self) -> bool {
-        self.borderless
+    pub fn set_options_modified_flag(&mut self) {
+        self.options_modified = true;
     }
 
     pub fn set_mode(&mut self, mode: i8) {

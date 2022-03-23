@@ -12,16 +12,14 @@ use bevy::prelude::{
     ResMut,
     SpriteBundle,
     Transform,
-    Windows,
     With,
     MouseButton,
 };
-use bevy::window::WindowMode;
 
 use crate::camera::Camera;
 use crate::menu::Menu;
-use crate::constants::Z_VALUE_CURSOR;
-use crate::options::toggle_option;
+use crate::constants::{Z_VALUE_CURSOR};
+use crate::options::{toggle_option};
 
 #[derive(Component)]
 pub struct CursorEntity;
@@ -40,14 +38,14 @@ impl Cursor {
         Cursor { img, initialized: false, entity: Entity::from_raw(0), x: 0., y: 0. }
     }
 
-    pub fn render(&mut self, 
-                  commands: &mut Commands, 
+    pub fn render(&mut self,
+                  commands: &mut Commands,
                   asset_server: &Res<AssetServer>) {
 
         if self.initialized {
             commands.entity(self.entity).despawn();
             self.initialized = false;
-        } 
+        }
 
         self.entity = commands
                          .spawn()
@@ -77,8 +75,7 @@ pub fn mouse_event_handler(mut cursor_moved: EventReader<CursorMoved>,
                            mut cursor: ResMut<Cursor>,
                            cam: ResMut<Camera>,
                            mut menu: ResMut<Menu>,
-                           mut positions: Query<&mut Transform, With<CursorEntity>>,
-                           mut windows: ResMut<Windows>) {
+                           mut positions: Query<&mut Transform, With<CursorEntity>>) {
 
     for event in cursor_moved.iter() {
         for mut transform in positions.iter_mut() {
@@ -100,59 +97,30 @@ pub fn mouse_event_handler(mut cursor_moved: EventReader<CursorMoved>,
         if event.state == ElementState::Pressed && event.button == MouseButton::Left {
             let response = menu.click_events(&mut commands,
                                                     &asset_server,
-                                                    &cam, 
-                                                    cursor.x, 
+                                                    &cam,
+                                                    cursor.x,
                                                     cursor.y);
 
-            if response.as_str() == "4k_mode" {
-                let window = match windows.get_primary_mut() {
-                    Some(w) => w,
-                    _ => break
-                };
-                window.set_scale_factor_override(
-                    window
-                        .scale_factor_override()
-                        .map(|n| ((n % 2.) + 1.))
-                );
-                toggle_option("4K Mode".to_string());
-                menu.render(&mut commands, &asset_server, &cam);
+            match response.as_str() {
+                "4k_mode" => {
+                    toggle_option("4K Mode".to_string());
+                },
+                "borderless" => {
+                    toggle_option("Borderless".to_string());
+                },
+                "vsync" => {
+                    toggle_option("V-sync".to_string());
+                },
+                "fullscreen" => {
+                    toggle_option("Fullscreen".to_string());
+                },
+                _ => {
+                    continue;
+                }
+            };
 
-
-            } else if response.as_str() == "borderless" {
-                toggle_option("Borderless".to_string());
-                menu.render(&mut commands, &asset_server, &cam);
-
-            } else if response.as_str() == "vsync" {
-                let window = match windows.get_primary_mut() {
-                    Some(w) => w,
-                    _ => break
-                };
-                window.set_vsync(!window.vsync());
-                toggle_option("V-sync".to_string());
-                menu.render(&mut commands, &asset_server, &cam);
-
-            } else if response.as_str() == "fullscreen" {
-                let window = match windows.get_primary_mut() {
-                    Some(w) => w,
-                    _ => break
-                };
-                match window.mode() {
-                    WindowMode::Windowed => {
-                        if menu.is_borderless() {
-                            window.set_mode(WindowMode::BorderlessFullscreen);
-                        } else {
-                            window.set_mode(WindowMode::Fullscreen);
-                        }
-                    },
-                    WindowMode::BorderlessFullscreen | WindowMode::Fullscreen => {
-                        window.set_mode(WindowMode::Windowed);
-                    },
-                    _ => {
-                    },
-                };
-                toggle_option("Fullscreen".to_string());
-                menu.render(&mut commands, &asset_server, &cam);
-            }
+            menu.set_options_modified_flag();
+            menu.render(&mut commands, &asset_server, &cam);
         }
     }
 }

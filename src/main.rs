@@ -2,6 +2,7 @@ mod camera;
 use camera::{Camera, camera_event_handler};
 
 mod constants;
+use constants::{CAMERA_HIGHEST_LEVEL, SCREEN_HEIGHT, SCREEN_WIDTH};
 
 mod cursor;
 use cursor::{Cursor, mouse_event_handler};
@@ -38,11 +39,6 @@ use bevy::{prelude::{
     WindowDescriptor,
 }, window::WindowMode};
 
-const CAMERA_HIGHEST_LEVEL: f32 = 1.0;
-
-const SCREEN_HEIGHT: f32 = 720.0;
-const SCREEN_WIDTH: f32 = 1280.0;
-
 fn main() {
 
     let text_content = [
@@ -54,7 +50,7 @@ fn main() {
 
     let current_options = get_options();
 
-    let mode: WindowMode = if current_options.fullscreen && current_options.borderless { WindowMode::BorderlessFullscreen } 
+    let mode: WindowMode = if current_options.fullscreen && current_options.borderless { WindowMode::BorderlessFullscreen }
                            else if current_options.fullscreen { WindowMode::Fullscreen }
                            else { WindowMode::Windowed };
     let scale_factor_override = match current_options.four_k_mode {

@@ -65,6 +65,10 @@ impl UI {
 
     pub fn render_hover(&mut self, commands: &mut Commands, asset_server: &Res<AssetServer>, x: f32, y: f32, z: f32) {
 
+        if self.img_hover.is_empty() {
+            return;
+        }
+
         commands.entity(self.entity_hover)
                 .insert_bundle(SpriteBundle {
                     texture: asset_server.load(self.img_hover.as_str()),
@@ -115,9 +119,9 @@ impl UI {
         let mouse_gfx_height: f32 = 16.;
         let mouse_gfx_width: f32 = 28.;
 
-        if (x+mouse_gfx_width >= self.x) 
-        && (x+mouse_gfx_width <= self.x + self.width) 
-        && (y+mouse_gfx_height >= self.y) 
+        if (x+mouse_gfx_width >= self.x)
+        && (x+mouse_gfx_width <= self.x + self.width)
+        && (y+mouse_gfx_height >= self.y)
         && (y+mouse_gfx_height <= self.y + self.height) {
             return true;
         }
