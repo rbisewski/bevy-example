@@ -23,17 +23,17 @@ use bevy::{
     input::keyboard::KeyCode::Escape,
 };
 
-use crate::camera::Camera;
 use crate::cursor::Cursor;
+use crate::gamestate::{Gamestate, Status};
 use crate::menu::Menu;
 use crate::level::{Level, LevelBiome};
 
 pub fn keyboard_event_handler(mut commands: Commands,
                           asset_server: Res<AssetServer>,
                           mut event_reader: EventReader<KeyboardInput>,
-                          cam: ResMut<Camera>,
                           mut cursor: ResMut<Cursor>,
-                          mut menu: ResMut<Menu>,
+                          mut gamestate: ResMut<Gamestate>,
+                          menu: ResMut<Menu>,
                           mut lvl: ResMut<Level>) {
 
     for event in event_reader.iter() {
@@ -46,11 +46,10 @@ pub fn keyboard_event_handler(mut commands: Commands,
                     Some(Escape) => {
                         match menu.visible() {
                             true => {
-                                menu.hide(&mut commands);
+                                gamestate.set_status(Status::DialogOpen);
                             },
                             false => {
-                                menu.reset_mode();
-                                menu.render(&mut commands, &asset_server, &cam);
+                                gamestate.set_status(Status::MenuOpen);
                             }
                         }
                     },

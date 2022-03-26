@@ -17,6 +17,8 @@ static MODE_QUIT: i8 = 3;
 use crate::camera::Camera;
 use crate::constants::Z_VALUE_MENU;
 use crate::constants::Z_VALUE_MENU_ELEMENTS;
+use crate::gamestate::Gamestate;
+use crate::gamestate::Status;
 use crate::options::get_options;
 use crate::ui::UI;
 
@@ -328,6 +330,7 @@ impl Menu {
                         commands: &mut Commands,
                         asset_server: &Res<AssetServer>,
                         cam: &ResMut<Camera>,
+                        gamestate: &mut ResMut<Gamestate>,
                         mouse_x: f32,
                         mouse_y: f32) -> String {
 
@@ -347,6 +350,7 @@ impl Menu {
         match name.as_str() {
             "Continue" => {
                 self.hide(commands);
+                gamestate.set_status(Status::DialogOpen);
             },
             "Options" => {
                 self.set_mode(MODE_OPTIONS);

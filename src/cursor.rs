@@ -17,6 +17,8 @@ use bevy::prelude::{
 };
 
 use crate::camera::Camera;
+use crate::dialog::Dialog;
+use crate::gamestate::{Gamestate, Status};
 use crate::menu::Menu;
 use crate::constants::{Z_VALUE_CURSOR};
 use crate::options::{toggle_option};
@@ -74,7 +76,9 @@ pub fn mouse_event_handler(mut cursor_moved: EventReader<CursorMoved>,
                            asset_server: Res<AssetServer>,
                            mut cursor: ResMut<Cursor>,
                            cam: ResMut<Camera>,
+                           mut gamestate: ResMut<Gamestate>,
                            mut menu: ResMut<Menu>,
+                           mut dialog: ResMut<Dialog>,
                            mut positions: Query<&mut Transform, With<CursorEntity>>) {
 
     for event in cursor_moved.iter() {
@@ -88,39 +92,70 @@ pub fn mouse_event_handler(mut cursor_moved: EventReader<CursorMoved>,
             transform.translation.x = cursor.x;
             transform.translation.y = cursor.y;
 
-            // run menu hover animations
-            menu.hover_events(&mut commands, &asset_server, cursor.x, cursor.y)
+            match gamestate.get_status() {
+
+                Status::MenuOpen => {
+                    menu.hover_events(&mut commands, &asset_server, cursor.x, cursor.y);
+                },
+                Status::DialogOpen => {
+                    dialog.hover_events(&mut commands, &asset_server, cursor.x, cursor.y);
+                },
+                Status::Playing => {
+                },
+            }
         }
     }
 
     for event in cursor_clicked.iter() {
         if event.state == ElementState::Pressed && event.button == MouseButton::Left {
-            let response = menu.click_events(&mut commands,
-                                                    &asset_server,
-                                                    &cam,
-                                                    cursor.x,
-                                                    cursor.y);
 
-            match response.as_str() {
-                "4k_mode" => {
-                    toggle_option("4K Mode".to_string());
-                },
-                "borderless" => {
-                    toggle_option("Borderless".to_string());
-                },
-                "vsync" => {
-                    toggle_option("V-sync".to_string());
-                },
-                "fullscreen" => {
-                    toggle_option("Fullscreen".to_string());
-                },
-                _ => {
-                    continue;
-                }
-            };
+            match gamestate.get_status() {
 
-            menu.set_options_modified_flag();
-            menu.render(&mut commands, &asset_server, &cam);
+                Status::MenuOpen => {
+                    let response = menu.click_events(&mut commands,
+                                                            &asset_server,
+                                                            &cam,
+                                                            &mut gamestate,
+                                                            cursor.x,
+                                                            cursor.y);
+
+                    match response.as_str() {
+                        "4k_mode" => {
+                            toggle_option("4K Mode".to_string());
+                        },
+                        "borderless" => {
+                            toggle_option("Borderless".to_string());
+                        },
+                        "vsync" => {
+                            toggle_option("V-sync".to_string());
+                        },
+                        "fullscreen" => {
+                            toggle_option("Fullscreen".to_string());
+                        },
+                        _ => {
+                            continue;
+                        }
+                    };
+
+                    menu.set_options_modified_flag();
+                    menu.render(&mut commands, &asset_server, &cam);
+                },
+
+                Status::DialogOpen => {
+                    let choice = dialog.click_events(cursor.x, cursor.y);
+                    match choice {
+                        0 => {
+                            // do nothing
+                        },
+                        _ => {
+                            gamestate.set_status(Status::Playing);
+                        }
+                    }
+                },
+
+                Status::Playing => {
+                },
+            }
         }
     }
 }

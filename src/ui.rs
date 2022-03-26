@@ -8,6 +8,8 @@ use bevy::prelude::{
     Transform,
 };
 
+use crate::constants::{MOUSE_GFX_HEIGHT,MOUSE_GFX_WIDTH};
+
 #[derive(Component)]
 pub struct UIEntity;
 
@@ -116,8 +118,8 @@ impl UI {
     }
 
     pub fn mouse_is_hovering(&self, x: f32, y: f32) -> bool {
-        let mouse_gfx_height: f32 = 16.;
-        let mouse_gfx_width: f32 = 28.;
+        let mouse_gfx_height: f32 = MOUSE_GFX_HEIGHT;
+        let mouse_gfx_width: f32 = MOUSE_GFX_WIDTH;
 
         if (x+mouse_gfx_width >= self.x)
         && (x+mouse_gfx_width <= self.x + self.width)
