@@ -56,7 +56,7 @@ pub fn keyboard_event_handler(mut commands: Commands,
 
                     // hide the mouse whilst the camera is panning
                     Some(Up) | Some(W) | Some(Down) | Some(S) | Some(Right) | Some(D) | Some(Left) | Some(A) => {
-                        if !menu.visible() {
+                        if gamestate.get_status() == Status::Playing {
                             cursor.hide(&mut commands);
                         }
                     },

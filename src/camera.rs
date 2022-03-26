@@ -27,7 +27,7 @@ use bevy::{
 static GFX_SCALE: f32 = 2.0;
 static PIXELS_TRANSLATED: f32 = 8.0;
 
-use crate::menu::Menu;
+use crate::gamestate::{Status, Gamestate};
 
 #[derive(Component)]
 pub struct CameraEntity;
@@ -85,7 +85,7 @@ impl Camera {
 }
 
 pub fn camera_event_handler(mut cam: ResMut<Camera>,
-                            menu: ResMut<Menu>,
+                            gamestate: ResMut<Gamestate>,
                             mut event_reader: EventReader<KeyboardInput>,
                             mut positions: Query<&mut Transform, With<CameraEntity>>) {
 
@@ -95,8 +95,8 @@ pub fn camera_event_handler(mut cam: ResMut<Camera>,
         if event.state == Released {
             continue;
 
-        // ignore keyboard events whilst the menu is visible
-        } else if menu.visible() {
+        // ignore keyboard events whilst the menu or dialog is visible
+        } else if gamestate.get_status() != Status::Playing {
             continue
         }
 
