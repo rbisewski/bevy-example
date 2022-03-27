@@ -1,0 +1,32 @@
+{
+    "0": {
+        "content": "Sample dialog entry; this never appears and is for documentation only.",
+        "choices": {
+            "0.1": {
+                "text": "The 'text' field is how this text appears to the end-user.",
+                "next": "0"
+            },
+            "0.2": {
+                "text": "The 'next' field refers to the dialog element; i.e. setting this to 1 will show the text content of element 1 below.",
+                "next": "0"
+            },
+            "0.3": {
+                "text": "Note that if 'next' field is set this to zero, this means the dialog window will close; i.e. the end of a dialog tree.",
+                "next": "0"
+            }
+        }
+    },
+    "1": {
+        "content": "Press {1} to change the biome.\nPress {2} to randomize the tiles.\nPress {W,A,S,D} or the arrow keys to navigate.\nPress {ESC} to open and close the menu.",
+        "choices": {
+            "1.1": {
+                "text": "1. Let's get started...",
+                "next": "0"
+            },
+            "1.2": {
+                "text": "2. Makes sense!",
+                "next": "0"
+            }
+        }
+    }
+}

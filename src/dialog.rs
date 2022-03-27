@@ -1,3 +1,6 @@
+use std::fs;
+use json::parse;
+
 use bevy::prelude::{
     AssetServer,
     Commands,
@@ -21,13 +24,6 @@ impl Dialog {
 
     pub fn new() -> Dialog {
 
-        let text_content = [
-            "Press {1} to change the biome.\n",
-            "Press {2} to randomize the tiles.\n",
-            "Press {W,A,S,D} or the arrow keys to navigate.\n",
-            "Press {ESC} to open and close the menu.",
-        ].concat();
-
         let ui = UI::new( 
             "Dialog Box".to_string(),
             "img/ui/menu_dialog.png".to_string(),
@@ -36,14 +32,66 @@ impl Dialog {
             552.,
         );
 
-        let text = Text::new(24., DIALOG_MAIN_TEXT_COLOR, &text_content, false);
+        let text = Text::new(24., DIALOG_MAIN_TEXT_COLOR, "", false);
 
-        let dialog_choices = vec![
-            Text::new(24., DIALOG_CHOICE_COLOR, "1. Let's get started...", true),
-            Text::new(24., DIALOG_CHOICE_COLOR, "2. Makes sense!", true),
-        ];
+        Dialog {initialized: false, ui, text, dialog_choices: vec![]}
+    }
 
-        Dialog {initialized: false, ui, text, dialog_choices}
+    pub fn load_dialog(&mut self, commands: &mut Commands, filename: String, number: i8) {
+
+        // the zeroth dialog option is reserved for null
+        if number == 0 {
+            return;
+        }
+
+        let number_as_string: String = number.to_string();
+
+        let contents = match fs::read_to_string(filename) {
+            Ok(s) => s,
+            _ => return,
+        };
+
+        let parsed = match parse(contents.as_str()) {
+            Ok(j) => j,
+            _ => return,
+        };
+
+        let dialog_entry = &parsed[number_as_string];
+
+        // free memory used from existing dialog main content
+        self.text.free(commands);
+
+        // load text content
+        let content = match dialog_entry["content"].as_str() {
+            Some(s) => s.to_string(),
+            _ => return,
+        };
+        self.text.set_content(content);
+
+        // free memory used from existing dialog choices
+        for d in self.dialog_choices.iter_mut() {
+            d.free(commands);
+        }
+        self.dialog_choices.clear();
+
+        // load new dialog choices into memory
+        let mut count = 1;
+        loop {
+            let choice_entry = [
+                number.to_string(),
+                ".".to_string(),
+                count.to_string(),
+            ].concat();
+
+            let choice_text = match dialog_entry["choices"][choice_entry]["text"].as_str() {
+                Some(s) => s.to_string(),
+                _ => break,
+            };
+
+            self.dialog_choices.push(Text::new(24., DIALOG_CHOICE_COLOR, &choice_text, true));
+
+            count += 1;
+        }
     }
 
     pub fn render(&mut self, commands: &mut Commands, asset_server: &Res<AssetServer>, camera: &ResMut<Camera>) {

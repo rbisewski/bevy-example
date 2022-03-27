@@ -92,10 +92,12 @@ fn setup(mut commands: Commands,
          asset_server: Res<AssetServer>,
          mut cam: ResMut<Camera>,
          mut cursor: ResMut<Cursor>,
+         mut dialog: ResMut<Dialog>,
          mut menu: ResMut<Menu>,
          mut lvl: ResMut<Level>) {
 
     cam.start(&mut commands);
+    dialog.load_dialog(&mut commands, "dialog/generic.json".to_string(), 1);
     menu.render(&mut commands, &asset_server, &cam);
     cursor.render(&mut commands, &asset_server);
     lvl.render(&mut commands, &asset_server);

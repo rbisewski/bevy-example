@@ -76,6 +76,10 @@ impl Text {
         self.z = z;
     }
 
+    pub fn set_content(&mut self, content: String) {
+        self.content = content;
+    }
+
     pub fn lines(&self) -> i8 {
         (self.content.matches('\n').count() as i8) + 1
     }
