@@ -143,13 +143,10 @@ pub fn mouse_event_handler(mut cursor_moved: EventReader<CursorMoved>,
 
                 Status::DialogOpen => {
                     let choice = dialog.click_events(cursor.x, cursor.y);
-                    match choice {
-                        0 => {
-                            // do nothing
-                        },
-                        _ => {
-                            gamestate.set_status(Status::Playing);
-                        }
+                    if choice == 0 {
+                        gamestate.set_status(Status::Playing);
+                    } else {
+                        // TODO: implement this to load the next element in the dialog tree
                     }
                 },
 

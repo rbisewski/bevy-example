@@ -13,11 +13,16 @@ use crate::constants::{Z_VALUE_MENU, Z_VALUE_MENU_ELEMENTS, DIALOG_MAIN_TEXT_COL
 use crate::text::Text;
 use crate::ui::UI;
 
+struct DialogChoice {
+    text: Text,
+    next: i16,
+}
+
 pub struct Dialog {
     initialized: bool,
     ui: UI,
     text: Text,
-    dialog_choices: Vec<Text>,
+    dialog_choices: Vec<DialogChoice>,
 }
 
 impl Dialog {
@@ -70,7 +75,8 @@ impl Dialog {
 
         // free memory used from existing dialog choices
         for d in self.dialog_choices.iter_mut() {
-            d.free(commands);
+            d.text.free(commands);
+            d.next = 0;
         }
         self.dialog_choices.clear();
 
@@ -83,12 +89,22 @@ impl Dialog {
                 count.to_string(),
             ].concat();
 
-            let choice_text = match dialog_entry["choices"][choice_entry]["text"].as_str() {
+            let choice_text = match dialog_entry["choices"][&choice_entry]["text"].as_str() {
                 Some(s) => s.to_string(),
                 _ => break,
             };
 
-            self.dialog_choices.push(Text::new(24., DIALOG_CHOICE_COLOR, &choice_text, true));
+            let choice_next = match dialog_entry["choices"][&choice_entry]["next"].as_i16() {
+                Some(s) => s,
+                _ => 0,
+            };
+
+            self.dialog_choices.push(
+                DialogChoice {
+                    text: Text::new(24., DIALOG_CHOICE_COLOR, &choice_text, true),
+                    next: choice_next,
+                }
+            );
 
             count += 1;
         }
@@ -116,7 +132,7 @@ impl Dialog {
         // each line of text is 12px plus 2px of space
         text_y -= (self.text.lines() as f32) * 14.;
         for d in self.dialog_choices.iter_mut() {
-            d.render("fonts/eight_bit.ttf", commands, asset_server, text_x, text_y, Z_VALUE_MENU_ELEMENTS);
+            d.text.render("fonts/eight_bit.ttf", commands, asset_server, text_x, text_y, Z_VALUE_MENU_ELEMENTS);
             text_y -= 14.;
         }
 
@@ -133,7 +149,8 @@ impl Dialog {
         self.text.free(commands);
 
         for d in self.dialog_choices.iter_mut() {
-            d.free(commands);
+            d.text.free(commands);
+            d.next = 0;
         }
 
         self.initialized = false;
@@ -149,35 +166,32 @@ impl Dialog {
         }
 
         for d in self.dialog_choices.iter_mut() {
-            let was_hovering = d.get_hover();
-            let is_hovering = d.mouse_is_hovering(mouse_x, mouse_y);
+            let was_hovering = d.text.get_hover();
+            let is_hovering = d.text.mouse_is_hovering(mouse_x, mouse_y);
 
             if was_hovering && !is_hovering {
-                d.set_hover(false);
-                d.render("fonts/eight_bit.ttf", commands, asset_server, d.get_x(), d.get_y(), Z_VALUE_MENU_ELEMENTS);
+                d.text.set_hover(false);
+                d.text.render("fonts/eight_bit.ttf", commands, asset_server, d.text.get_x(), d.text.get_y(), Z_VALUE_MENU_ELEMENTS);
 
             } else if !was_hovering && is_hovering {
-                d.set_hover(true);
-                d.render("fonts/eight_bit.ttf", commands, asset_server, d.get_x(), d.get_y(), Z_VALUE_MENU_ELEMENTS);
+                d.text.set_hover(true);
+                d.text.render("fonts/eight_bit.ttf", commands, asset_server, d.text.get_x(), d.text.get_y(), Z_VALUE_MENU_ELEMENTS);
             }
         }
     }
 
     pub fn click_events(&mut self,
                         mouse_x: f32,
-                        mouse_y: f32) -> i8 {
+                        mouse_y: f32) -> i16 {
 
         if !self.visible() {
             return 0;
         }
 
-        // TODO: make this better
-        let mut count = 1;
         for d in self.dialog_choices.iter_mut() {
-            if d.mouse_is_hovering(mouse_x, mouse_y) {
-                return count;
+            if d.text.mouse_is_hovering(mouse_x, mouse_y) {
+                return d.next;
             }
-            count += 1;
         }
 
         0
