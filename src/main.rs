@@ -41,7 +41,10 @@ use bevy::{prelude::{
     Res,
     ResMut,
     WindowDescriptor,
-}, window::WindowMode};
+}, window::{
+    PresentMode,
+    WindowMode
+}};
 
 fn main() {
 
@@ -56,6 +59,12 @@ fn main() {
         false => Some(1.0)
     };
 
+    // Present Mode is what wgpu calls "V-Sync"
+    let present_mode = match current_options.vsync {
+        true => PresentMode::Mailbox,
+        false => PresentMode::Immediate
+    };
+
     App::new()
         .insert_resource(WindowDescriptor {
             title: "Bevy engine example using tiles, camera, and keyboard plus mouse input".to_string(),
@@ -65,7 +74,7 @@ fn main() {
             resizable: false,
             cursor_visible: false,
             mode,
-            vsync: current_options.vsync,
+            present_mode,
             ..Default::default()
         })
 
