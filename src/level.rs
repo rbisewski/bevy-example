@@ -123,7 +123,7 @@ impl Level {
                 "img/desert/"
             },
             LevelBiome::Grass => {
-                biome_max = 8;
+                biome_max = 9;
                 decal_types = vec![
                     "flower_".to_string(),
                     "plant_".to_string(),
