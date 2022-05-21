@@ -39,10 +39,6 @@ run:
 lint:
 	@cargo clippy -- -A clippy::too_many_arguments
 
-strip:
-	@strip target/debug/bevy-example &> /dev/null | :
-	@strip target/release/bevy-example &> /dev/null | :
-
 clean:
 	@echo 'Cleaning...'
 	@cargo clean
