@@ -5,15 +5,15 @@ use bevy::prelude::{
     EventReader,
     Query,
     ResMut,
-    OrthographicCameraBundle,
+    Camera2dBundle,
     Transform,
-    UiCameraBundle,
     Vec3,
     With,
+    OrthographicProjection, UiCameraConfig,
 };
 use bevy::{
     input::keyboard::KeyboardInput,
-    input::ElementState::Released,
+    input::ButtonState::Released,
     input::keyboard::KeyCode::W,
     input::keyboard::KeyCode::S,
     input::keyboard::KeyCode::A,
@@ -36,7 +36,6 @@ pub struct Camera {
     x: f32,
     y: f32,
     z: f32,
-    ui: Entity,
     twodee: Entity,
     screen_height: f32,
     screen_width: f32,
@@ -45,24 +44,24 @@ pub struct Camera {
 impl Camera {
 
     pub fn new(x: f32, y: f32, z: f32, screen_height: f32, screen_width: f32) -> Camera {
-        Camera { x, y, z, ui: Entity::from_raw(0), twodee: Entity::from_raw(0), screen_height, screen_width }
+        Camera { x, y, z, twodee: Entity::from_raw(0), screen_height, screen_width }
     }
 
     pub fn start(&mut self, commands: &mut Commands) {
 
-        self.ui = commands
-                     .spawn()
-                     .insert_bundle(UiCameraBundle::default())
-                     .id();
-
-        let mut twodee_cam = OrthographicCameraBundle::new_2d();
-        let mut transform = Transform::from_translation(Vec3::new(self.x, self.y, self.z));
-        transform.scale = Vec3::splat(1.0/GFX_SCALE);
-        twodee_cam.transform = transform;
+        let twodee_cam = Camera2dBundle {
+            transform: Transform::from_translation(Vec3::new(self.x, self.y, self.z)),
+            projection: OrthographicProjection {
+                scale: 1.0/GFX_SCALE,
+                ..Default::default()
+            },
+            ..Default::default()
+        };
 
         self.twodee = commands
                          .spawn()
                          .insert_bundle(twodee_cam)
+                         .insert(UiCameraConfig { show_ui: false })
                          .insert(CameraEntity)
                          .id();
     }

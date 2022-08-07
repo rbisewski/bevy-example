@@ -44,7 +44,7 @@ use bevy::{prelude::{
 }, window::{
     PresentMode,
     WindowMode
-}};
+}, render::texture::ImageSettings};
 
 fn main() {
 
@@ -56,7 +56,7 @@ fn main() {
 
     let scale_factor_override = match current_options.four_k_mode {
         true => Some(2.0),
-        false => Some(1.0)
+        false => Some(1.0),
     };
 
     // Present Mode is what wgpu calls "V-Sync"
@@ -77,6 +77,8 @@ fn main() {
             present_mode,
             ..Default::default()
         })
+
+        .insert_resource(ImageSettings::default_nearest())
 
         .add_plugins(DefaultPlugins)
 

@@ -1,9 +1,9 @@
 [package]
 name = "bevy-example"
-version = "1.0.4"
-authors = ["Robert Bisewski <contact@ibiscybernetics.com>"]
+version = "1.0.5"
+authors = ["Robert Bisewski <rbisewski@ibiscybernetics.com>"]
 edition = "2021"
-rust-version = "1.61"
+rust-version = "1.62.1"
 resolver = "2"
 
 [profile.release]
@@ -19,6 +19,6 @@ rpath = false
 strip = "symbols"
 
 [dependencies]
-bevy = "0.7.0"
+bevy = "0.8.0"
 json = "0.12.4"
 rand = "0.8.5"

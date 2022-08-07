@@ -4,7 +4,6 @@ use bevy::{prelude::{
     Color,
     Entity,
     Res,
-    TextAlignment,
     Text2dBundle,
     TextStyle,
     Transform,
@@ -58,14 +57,13 @@ impl Text {
                                       scale: Vec3::new(TEXT_DIALOG_SCALE,TEXT_DIALOG_SCALE,TEXT_DIALOG_SCALE),
                                       translation: Vec3::new(x, y, z),
                                   },
-                                  text: bevy::prelude::Text::with_section (
+                                  text: bevy::prelude::Text::from_section (
                                       self.content.clone(),
                                       TextStyle {
                                           font: asset_server.load(font),
                                           font_size: self.size,
                                           color: self.color,
-                                      },
-                                      TextAlignment::default()
+                                      }
                                   ),
                                   ..Default::default()
                               }).id();

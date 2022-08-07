@@ -1,4 +1,4 @@
-PROJECT_NAME = 'rust_bevy_tile_example'
+PROJECT_NAME = 'bevy_example'
 
 # Version
 VERSION = `date +%y.%m`
@@ -33,8 +33,11 @@ build:
 	@echo 'Building release...'
 	@cargo build --release
 
+#run:
+#	@RUSTFLAGS="${FLAGS}" cargo run --release
+
 run:
-	@RUSTFLAGS="${FLAGS}" cargo run --release
+	cargo run --release
 
 lint:
 	@cargo clippy -- -A clippy::too_many_arguments

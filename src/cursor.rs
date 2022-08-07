@@ -1,4 +1,4 @@
-use bevy::input::ElementState;
+use bevy::input::ButtonState;
 use bevy::input::mouse::MouseButtonInput;
 use bevy::prelude::{
     AssetServer,
@@ -107,7 +107,7 @@ pub fn mouse_event_handler(mut cursor_moved: EventReader<CursorMoved>,
     }
 
     for event in cursor_clicked.iter() {
-        if event.state == ElementState::Pressed && event.button == MouseButton::Left {
+        if event.state == ButtonState::Pressed && event.button == MouseButton::Left {
 
             match gamestate.get_status() {
 

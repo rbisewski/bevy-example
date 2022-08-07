@@ -8,8 +8,8 @@ use bevy::prelude::{
 
 use bevy::{
     input::keyboard::KeyboardInput,
-    input::ElementState::Pressed,
-    input::ElementState::Released,
+    input::ButtonState::Pressed,
+    input::ButtonState::Released,
     input::keyboard::KeyCode::Key1,
     input::keyboard::KeyCode::Key2,
     input::keyboard::KeyCode::W,
