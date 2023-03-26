@@ -9,7 +9,7 @@ use bevy::prelude::{
 };
 
 use crate::camera::Camera;
-use crate::constants::{Z_VALUE_MENU, Z_VALUE_MENU_ELEMENTS, DIALOG_MAIN_TEXT_COLOR, DIALOG_CHOICE_COLOR};
+use crate::constants::{Z_VALUE_MENU, Z_VALUE_MENU_ELEMENTS, DIALOG_MAIN_TEXT_COLOR, DIALOG_CHOICE_COLOR, DIALOG_CHOICE_HEIGHT, DIALOG_FONT_SIZE};
 use crate::text::Text;
 use crate::ui::UI;
 
@@ -38,7 +38,7 @@ impl Dialog {
             552.,
         );
 
-        let text = Text::new(24., DIALOG_MAIN_TEXT_COLOR, "", false);
+        let text = Text::new(DIALOG_FONT_SIZE, DIALOG_MAIN_TEXT_COLOR, "", false);
 
         Dialog {initialized: false, ui, text, dialog_choices: vec![]}
     }
@@ -102,7 +102,7 @@ impl Dialog {
 
             self.dialog_choices.push(
                 DialogChoice {
-                    text: Text::new(24., DIALOG_CHOICE_COLOR, &choice_text, true),
+                    text: Text::new(DIALOG_FONT_SIZE, DIALOG_CHOICE_COLOR, &choice_text, true),
                     next: choice_next,
                 }
             );
@@ -122,18 +122,19 @@ impl Dialog {
 
         self.ui.render(commands, asset_server, x, y, Z_VALUE_MENU);
 
-        let text_x = x-166.;
-        let mut text_y = y+40.;
+        let mut text_x = x-40.;
+        let mut text_y = y+16.;
 
         self.text.render("fonts/eight_bit.ttf", commands, asset_server, text_x, text_y, Z_VALUE_MENU_ELEMENTS);
 
-        // add a space of 6px between the dialog text and choices
-        text_y -= 6.;
+        text_x -= 66.;
 
-        // each line of text is 12px plus 2px of space
-        text_y -= (self.text.lines() as f32) * 14.;
+        // each line of text is 20 / 2 = 10px of space
+        text_y -= (self.text.lines() as f32) * 10.;
+
         for d in self.dialog_choices.iter_mut() {
             d.text.render("fonts/eight_bit.ttf", commands, asset_server, text_x, text_y, Z_VALUE_MENU_ELEMENTS);
+            text_x -= DIALOG_CHOICE_HEIGHT;
             text_y -= 14.;
         }
 

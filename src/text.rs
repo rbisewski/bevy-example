@@ -9,10 +9,15 @@ use bevy::{prelude::{
     Transform,
 }, math::{Vec3, Quat}};
 
-use crate::constants::{TEXT_DIALOG_SCALE, MOUSE_GFX_HEIGHT, MOUSE_GFX_WIDTH, DIALOG_HOVER_COLOR, DIALOG_CHOICE_COLOR};
-
-static DIALOG_CHOICE_HEIGHT: f32 = 12.;
-static DIALOG_CHOICE_WIDTH: f32 = 400.;
+use crate::constants::{
+    DIALOG_HOVER_COLOR,
+    DIALOG_CHOICE_COLOR,
+    DIALOG_CHOICE_HEIGHT,
+    DIALOG_CHOICE_WIDTH,
+    MOUSE_GFX_HEIGHT,
+    MOUSE_GFX_WIDTH,
+    TEXT_DIALOG_SCALE,
+};
 
 pub struct Text {
     initialized: bool,
@@ -118,8 +123,8 @@ impl Text {
             return false;
         }
 
-        let x_offset = -32.;
-        let y_offset = 6.;
+        let x_offset = 24.;
+        let y_offset = 0.;
 
         if (x + x_offset + MOUSE_GFX_WIDTH >= self.x)
         && (x + x_offset + MOUSE_GFX_WIDTH <= self.x + DIALOG_CHOICE_WIDTH)
