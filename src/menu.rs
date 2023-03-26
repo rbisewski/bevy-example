@@ -4,6 +4,7 @@ use bevy::prelude::{
     Component,
     Entity,
     Res,
+    Resource,
     ResMut,
     SpriteBundle,
     Transform,
@@ -25,6 +26,7 @@ use crate::ui::UI;
 #[derive(Component)]
 pub struct MenuEntity;
 
+#[derive(Resource)]
 pub struct Menu {
     img: String,
     initialized: bool,
@@ -266,8 +268,7 @@ impl Menu {
         }
 
         self.entity = commands
-                         .spawn()
-                         .insert_bundle(SpriteBundle {
+                         .spawn(SpriteBundle {
                              texture: asset_server.load(self.img.as_str()),
                              transform: Transform::from_xyz(camera.get_x(), camera.get_y(), Z_VALUE_MENU),
                              ..Default::default()

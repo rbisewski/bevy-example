@@ -2,7 +2,7 @@ use bevy::prelude::{
     AssetServer,
     Commands,
     Res, 
-    ResMut, 
+    ResMut, Resource, 
 };
 
 use crate::camera::Camera;
@@ -16,6 +16,7 @@ pub enum Status {
     DialogOpen,
 }
 
+#[derive(Resource)]
 pub struct Gamestate {
     status: Status,
     changed: bool,

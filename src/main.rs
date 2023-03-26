@@ -38,13 +38,18 @@ use bevy::{prelude::{
     AssetServer,
     Commands,
     DefaultPlugins,
+    ImagePlugin,
+    PluginGroup,
     Res,
     ResMut,
-    WindowDescriptor,
 }, window::{
+    Cursor as BevyCursor,
     PresentMode,
-    WindowMode
-}, render::texture::ImageSettings};
+    WindowMode,
+    WindowPlugin,
+    Window,
+    WindowResolution,
+}};
 
 fn main() {
 
@@ -55,8 +60,8 @@ fn main() {
                            else { WindowMode::Windowed };
 
     let scale_factor_override = match current_options.four_k_mode {
-        true => Some(2.0),
-        false => Some(1.0),
+        true => 2.,
+        false => 1.,
     };
 
     // Present Mode is what wgpu calls "V-Sync"
@@ -65,22 +70,25 @@ fn main() {
         false => PresentMode::Immediate
     };
 
+    let mut bevy_cursor: BevyCursor = Default::default();
+    bevy_cursor.visible = false;
+
     App::new()
-        .insert_resource(WindowDescriptor {
-            title: "Bevy engine example using tiles, camera, and keyboard plus mouse input".to_string(),
-            scale_factor_override,
-            width: SCREEN_WIDTH,
-            height: SCREEN_HEIGHT,
-            resizable: false,
-            cursor_visible: false,
-            mode,
-            present_mode,
-            ..Default::default()
-        })
 
-        .insert_resource(ImageSettings::default_nearest())
-
-        .add_plugins(DefaultPlugins)
+        .add_plugins(DefaultPlugins
+            .set(ImagePlugin::default_nearest())
+            .set(WindowPlugin {
+                primary_window: Some(Window {
+                    cursor: bevy_cursor,
+                    title: "Bevy engine example using tiles, camera, and keyboard plus mouse input".to_string(),
+                    resolution: WindowResolution::new(SCREEN_WIDTH,SCREEN_HEIGHT).with_scale_factor_override(scale_factor_override),
+                    resizable: false,
+                    mode,
+                    present_mode,
+                    ..Default::default()
+                }),
+                ..Default::default()})
+        )
 
         .insert_resource(Camera::new(320.0, 320.0, CAMERA_HIGHEST_LEVEL, SCREEN_HEIGHT, SCREEN_WIDTH))
         .insert_resource(Cursor::new("img/ui/mouse_gfx.png".to_string()))

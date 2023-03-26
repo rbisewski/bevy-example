@@ -9,7 +9,7 @@ use bevy::prelude::{
     Transform,
     Vec3,
     With,
-    OrthographicProjection, UiCameraConfig,
+    OrthographicProjection, UiCameraConfig, Resource,
 };
 use bevy::{
     input::keyboard::KeyboardInput,
@@ -32,6 +32,7 @@ use crate::gamestate::{Status, Gamestate};
 #[derive(Component)]
 pub struct CameraEntity;
 
+#[derive(Resource)]
 pub struct Camera {
     x: f32,
     y: f32,
@@ -59,8 +60,7 @@ impl Camera {
         };
 
         self.twodee = commands
-                         .spawn()
-                         .insert_bundle(twodee_cam)
+                         .spawn(twodee_cam)
                          .insert(UiCameraConfig { show_ui: false })
                          .insert(CameraEntity)
                          .id();

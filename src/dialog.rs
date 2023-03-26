@@ -5,7 +5,7 @@ use bevy::prelude::{
     AssetServer,
     Commands,
     Res,
-    ResMut,
+    ResMut, Resource,
 };
 
 use crate::camera::Camera;
@@ -18,6 +18,7 @@ struct DialogChoice {
     next: i16,
 }
 
+#[derive(Resource)]
 pub struct Dialog {
     initialized: bool,
     ui: UI,

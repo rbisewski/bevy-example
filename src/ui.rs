@@ -39,8 +39,7 @@ impl UI {
 
         if !self.initialized {
 
-            self.entity = commands.spawn()
-                                  .insert_bundle(SpriteBundle {
+            self.entity = commands.spawn(SpriteBundle {
                                       texture: asset_server.load(self.img.as_str()),
                                       transform: Transform::from_xyz(x+self.xoffset, y, z),
                                       ..Default::default()
@@ -48,15 +47,14 @@ impl UI {
                                   .insert(UIEntity)
                                   .id();
 
-            self.entity_hover = commands.spawn()
-                                        .insert(UIEntity)
+            self.entity_hover = commands.spawn(UIEntity)
                                         .id();
             self.initialized = true;
 
         }
 
         if self.hovered {
-            commands.entity(self.entity_hover).remove_bundle::<SpriteBundle>();
+            commands.entity(self.entity_hover).remove::<SpriteBundle>();
         }
 
         self.hovered = false;
@@ -72,7 +70,7 @@ impl UI {
         }
 
         commands.entity(self.entity_hover)
-                .insert_bundle(SpriteBundle {
+                .insert(SpriteBundle {
                     texture: asset_server.load(self.img_hover.as_str()),
                     transform: Transform::from_xyz(x+self.xoffset, y, z+0.01),
                     ..Default::default()

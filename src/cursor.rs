@@ -13,7 +13,7 @@ use bevy::prelude::{
     SpriteBundle,
     Transform,
     With,
-    MouseButton,
+    MouseButton, Resource,
 };
 
 use crate::camera::Camera;
@@ -26,6 +26,7 @@ use crate::options::{toggle_option};
 #[derive(Component)]
 pub struct CursorEntity;
 
+#[derive(Resource)]
 pub struct Cursor {
     img: String,
     initialized: bool,
@@ -50,8 +51,7 @@ impl Cursor {
         }
 
         self.entity = commands
-                         .spawn()
-                         .insert_bundle(SpriteBundle {
+                         .spawn(SpriteBundle {
                              texture: asset_server.load(self.img.as_str()),
                              transform: Transform::from_xyz(self.x, self.y, Z_VALUE_CURSOR),
                              ..Default::default()

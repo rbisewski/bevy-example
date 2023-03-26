@@ -3,9 +3,11 @@ use bevy::prelude::{
     AssetServer,
     Transform,
     Res,
+    Resource,
     SpriteBundle,
     Visibility,
 };
+
 
 use rand::Rng;
 
@@ -23,6 +25,7 @@ pub enum LevelBiome {
     Space,
 }
 
+#[derive(Resource)]
 pub struct Level {
     biome: LevelBiome,
     tiles: Vec<Tile>,
@@ -227,8 +230,7 @@ impl Level {
             let path_to_texture = asset_server.load(tile.get_image_as_str());
             tile.set_entity(
                 commands
-                    .spawn()
-                    .insert_bundle(SpriteBundle {
+                    .spawn(SpriteBundle {
                         texture: path_to_texture,
                         transform: Transform::from_xyz(TILE_SIZE * x as f32, TILE_SIZE * y as f32, Z_VALUE_TILE),
                     ..Default::default()
@@ -254,12 +256,9 @@ impl Level {
             let path_to_texture = asset_server.load(decal.get_image_as_str());
             decal.set_entity(
                 commands
-                    .spawn()
-                    .insert_bundle(SpriteBundle {
+                    .spawn(SpriteBundle {
                         texture: path_to_texture,
-                        visibility: Visibility {
-                            is_visible: true,
-                        },
+                        visibility: Visibility::Visible,
                         transform: Transform::from_xyz(TILE_SIZE * x as f32, TILE_SIZE * y as f32, Z_VALUE_DECAL),
                     ..Default::default()
                 })

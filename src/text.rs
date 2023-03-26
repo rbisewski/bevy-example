@@ -50,8 +50,7 @@ impl Text {
             self.free(commands);
         }
 
-        self.entity = commands.spawn()
-                              .insert_bundle(Text2dBundle {
+        self.entity = commands.spawn(Text2dBundle {
                                   transform: Transform {
                                       rotation: Quat::from_rotation_z(0.),
                                       scale: Vec3::new(TEXT_DIALOG_SCALE,TEXT_DIALOG_SCALE,TEXT_DIALOG_SCALE),

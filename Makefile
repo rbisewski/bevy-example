@@ -33,9 +33,6 @@ build:
 	@echo 'Building release...'
 	@cargo build --release
 
-#run:
-#	@RUSTFLAGS="${FLAGS}" cargo run --release
-
 run:
 	cargo run --release
 
