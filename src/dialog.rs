@@ -1,5 +1,5 @@
 use std::fs;
-use json::parse;
+use jzon::parse;
 
 use bevy::prelude::{
     AssetServer,
@@ -122,12 +122,12 @@ impl Dialog {
 
         self.ui.render(commands, asset_server, x, y, Z_VALUE_MENU);
 
-        let mut text_x = x-40.;
+        let mut text_x = x-72.;
         let mut text_y = y+16.;
 
         self.text.render("fonts/eight_bit.ttf", commands, asset_server, text_x, text_y, Z_VALUE_MENU_ELEMENTS);
 
-        text_x -= 66.;
+        text_x -= 46.;
 
         // each line of text is 20 / 2 = 10px of space
         text_y -= (self.text.lines() as f32) * 10.;

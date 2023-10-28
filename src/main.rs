@@ -41,7 +41,7 @@ use bevy::{prelude::{
     ImagePlugin,
     PluginGroup,
     Res,
-    ResMut,
+    ResMut, Startup, Update,
 }, window::{
     Cursor as BevyCursor,
     PresentMode,
@@ -70,8 +70,10 @@ fn main() {
         false => PresentMode::Immediate
     };
 
-    let mut bevy_cursor: BevyCursor = Default::default();
-    bevy_cursor.visible = false;
+    let bevy_cursor = BevyCursor {
+        visible: false,
+        ..Default::default()
+    };
 
     App::new()
 
@@ -97,12 +99,12 @@ fn main() {
         .insert_resource(Menu::new("img/ui/menu_main.png".to_string()))
         .insert_resource(Level::new(LevelBiome::Marsh))
 
-        .add_startup_system(setup)
+        .add_systems(Startup, setup)
 
-        .add_system(gamestate_handler)
-        .add_system(camera_event_handler)
-        .add_system(keyboard_event_handler)
-        .add_system(mouse_event_handler)
+        .add_systems(Update, gamestate_handler)
+        .add_systems(Update, camera_event_handler)
+        .add_systems(Update, keyboard_event_handler)
+        .add_systems(Update, mouse_event_handler)
 
         .run();
 }

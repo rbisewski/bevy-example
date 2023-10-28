@@ -1,5 +1,5 @@
 use std::{fs, path::Path};
-use json::{JsonValue, parse};
+use jzon::{JsonValue, parse};
 
 pub struct Options {
     pub four_k_mode: bool,

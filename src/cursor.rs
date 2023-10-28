@@ -20,8 +20,8 @@ use crate::camera::Camera;
 use crate::dialog::Dialog;
 use crate::gamestate::{Gamestate, Status};
 use crate::menu::Menu;
-use crate::constants::{Z_VALUE_CURSOR};
-use crate::options::{toggle_option};
+use crate::constants::Z_VALUE_CURSOR;
+use crate::options::toggle_option;
 
 #[derive(Component)]
 pub struct CursorEntity;
@@ -86,7 +86,7 @@ pub fn mouse_event_handler(mut cursor_moved: EventReader<CursorMoved>,
 
             // record the cursor's position on the screen
             cursor.x = event.position.x + cam.get_x() - (cam.screen_width()/2.);
-            cursor.y = event.position.y + cam.get_y() - (cam.screen_height()/2.);
+            cursor.y = cam.get_y() - event.position.y + (cam.screen_height()/2.);
 
             // move the mouse graphic to the desired location
             transform.translation.x = cursor.x;
