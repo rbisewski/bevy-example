@@ -9,19 +9,20 @@ use bevy::prelude::{
     Transform,
     Vec3,
     With,
-    OrthographicProjection, UiCameraConfig, Resource,
+    OrthographicProjection,
+    Resource,
 };
 use bevy::{
     input::keyboard::KeyboardInput,
     input::ButtonState::Released,
-    input::keyboard::KeyCode::W,
-    input::keyboard::KeyCode::S,
-    input::keyboard::KeyCode::A,
-    input::keyboard::KeyCode::D,
-    input::keyboard::KeyCode::Up,
-    input::keyboard::KeyCode::Down,
-    input::keyboard::KeyCode::Right,
-    input::keyboard::KeyCode::Left,
+    input::keyboard::KeyCode::KeyW,
+    input::keyboard::KeyCode::KeyS,
+    input::keyboard::KeyCode::KeyA,
+    input::keyboard::KeyCode::KeyD,
+    input::keyboard::KeyCode::ArrowUp,
+    input::keyboard::KeyCode::ArrowDown,
+    input::keyboard::KeyCode::ArrowRight,
+    input::keyboard::KeyCode::ArrowLeft,
 };
 
 static GFX_SCALE: f32 = 2.0;
@@ -61,7 +62,6 @@ impl Camera {
 
         self.twodee = commands
                          .spawn(twodee_cam)
-                         .insert(UiCameraConfig { show_ui: false })
                          .insert(CameraEntity)
                          .id();
     }
@@ -103,19 +103,19 @@ pub fn camera_event_handler(mut cam: ResMut<Camera>,
             match event.key_code {
 
                 // move camera
-                Some(Up) | Some(W) => {
+                ArrowUp | KeyW => {
                     cam.y += PIXELS_TRANSLATED;
                     transform.translation.y = cam.y;
                 },
-                Some(Down) | Some(S) => {
+                ArrowDown | KeyS => {
                     cam.y -= PIXELS_TRANSLATED;
                     transform.translation.y = cam.y;
                 },
-                Some(Right) | Some(D) => {
+                ArrowRight | KeyD => {
                     cam.x += PIXELS_TRANSLATED;
                     transform.translation.x = cam.x;
                 },
-                Some(Left) | Some(A) => {
+                ArrowLeft | KeyA => {
                     cam.x -= PIXELS_TRANSLATED;
                     transform.translation.x = cam.x;
                 },

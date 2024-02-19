@@ -10,16 +10,16 @@ use bevy::{
     input::keyboard::KeyboardInput,
     input::ButtonState::Pressed,
     input::ButtonState::Released,
-    input::keyboard::KeyCode::Key1,
-    input::keyboard::KeyCode::Key2,
-    input::keyboard::KeyCode::W,
-    input::keyboard::KeyCode::S,
-    input::keyboard::KeyCode::A,
-    input::keyboard::KeyCode::D,
-    input::keyboard::KeyCode::Up,
-    input::keyboard::KeyCode::Down,
-    input::keyboard::KeyCode::Right,
-    input::keyboard::KeyCode::Left,
+    input::keyboard::KeyCode::Digit1,
+    input::keyboard::KeyCode::Digit2,
+    input::keyboard::KeyCode::KeyW,
+    input::keyboard::KeyCode::KeyS,
+    input::keyboard::KeyCode::KeyA,
+    input::keyboard::KeyCode::KeyD,
+    input::keyboard::KeyCode::ArrowUp,
+    input::keyboard::KeyCode::ArrowDown,
+    input::keyboard::KeyCode::ArrowRight,
+    input::keyboard::KeyCode::ArrowLeft,
     input::keyboard::KeyCode::Escape,
 };
 
@@ -43,7 +43,7 @@ pub fn keyboard_event_handler(mut commands: Commands,
                 match event.key_code {
 
                     // exit
-                    Some(Escape) => {
+                    Escape => {
                         match menu.visible() {
                             true => {
                                 gamestate.set_status(Status::DialogOpen);
@@ -55,14 +55,14 @@ pub fn keyboard_event_handler(mut commands: Commands,
                     },
 
                     // hide the mouse whilst the camera is panning
-                    Some(Up) | Some(W) | Some(Down) | Some(S) | Some(Right) | Some(D) | Some(Left) | Some(A) => {
+                    ArrowUp | KeyW | ArrowDown | KeyS | ArrowRight | KeyD | ArrowLeft | KeyA => {
                         if gamestate.get_status() == Status::Playing {
                             cursor.hide(&mut commands);
                         }
                     },
 
                     // switch biome
-                    Some(Key1) => {
+                    Digit1 => {
                         match lvl.get_biome() {
                             LevelBiome::Desert => {
                                 lvl.change(LevelBiome::Grass);
@@ -87,7 +87,7 @@ pub fn keyboard_event_handler(mut commands: Commands,
                     },
 
                     // randomize tiles
-                    Some(Key2) => {
+                    Digit2 => {
                         match lvl.get_biome() {
                             LevelBiome::Desert => {
                                 lvl.change(LevelBiome::Desert);
@@ -119,7 +119,7 @@ pub fn keyboard_event_handler(mut commands: Commands,
                 match event.key_code {
 
                     // restore the mouse cursor once the camera stops
-                    Some(Up) | Some(W) | Some(Down) | Some(S) | Some(Right) | Some(D) | Some(Left) | Some(A) => {
+                    ArrowUp | KeyW | ArrowDown | KeyS | ArrowRight | KeyD | ArrowLeft | KeyA => {
                         cursor.render(&mut commands, &mut asset_server);
                     },
 
