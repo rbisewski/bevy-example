@@ -5,7 +5,7 @@ use bevy::prelude::Entity;
 pub struct Decal {
     x: u32,
     y: u32,
-    img: String,
+    pub img: String,
     initialized: bool,
     entity: Entity,
 }
@@ -28,9 +28,6 @@ impl Decal {
         self.entity = entity;
     }
 
-    pub fn get_image_as_str(&mut self) -> &str {
-        self.img.as_str()
-    }
     pub fn get_initialized(&mut self) -> bool {
         self.initialized
     }

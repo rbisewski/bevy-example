@@ -64,7 +64,7 @@ impl Text {
                                   text: bevy::prelude::Text::from_section (
                                       self.content.clone(),
                                       TextStyle {
-                                          font: asset_server.load(font),
+                                          font: asset_server.load(font.to_owned()),
                                           font_size: self.size,
                                           color: self.color,
                                       }

@@ -43,7 +43,7 @@ impl Cursor {
 
     pub fn render(&mut self,
                   commands: &mut Commands,
-                  asset_server: &Res<AssetServer>) {
+                  asset_server: &mut Res<AssetServer>) {
 
         if self.initialized {
             commands.entity(self.entity).despawn();
@@ -52,7 +52,7 @@ impl Cursor {
 
         self.entity = commands
                          .spawn(SpriteBundle {
-                             texture: asset_server.load(self.img.as_str()),
+                             texture: asset_server.load(&self.img),
                              transform: Transform::from_xyz(self.x, self.y, Z_VALUE_CURSOR),
                              ..Default::default()
                          })
@@ -81,7 +81,7 @@ pub fn mouse_event_handler(mut cursor_moved: EventReader<CursorMoved>,
                            mut dialog: ResMut<Dialog>,
                            mut positions: Query<&mut Transform, With<CursorEntity>>) {
 
-    for event in cursor_moved.iter() {
+    for event in cursor_moved.read() {
         for mut transform in positions.iter_mut() {
 
             // record the cursor's position on the screen
@@ -106,7 +106,7 @@ pub fn mouse_event_handler(mut cursor_moved: EventReader<CursorMoved>,
         }
     }
 
-    for event in cursor_clicked.iter() {
+    for event in cursor_clicked.read() {
         if event.state == ButtonState::Pressed && event.button == MouseButton::Left {
 
             match gamestate.get_status() {

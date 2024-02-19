@@ -29,14 +29,14 @@ use crate::menu::Menu;
 use crate::level::{Level, LevelBiome};
 
 pub fn keyboard_event_handler(mut commands: Commands,
-                          asset_server: Res<AssetServer>,
+                          mut asset_server: Res<AssetServer>,
                           mut event_reader: EventReader<KeyboardInput>,
                           mut cursor: ResMut<Cursor>,
                           mut gamestate: ResMut<Gamestate>,
                           menu: ResMut<Menu>,
                           mut lvl: ResMut<Level>) {
 
-    for event in event_reader.iter() {
+    for event in event_reader.read() {
 
         match event.state {
             Pressed => {
@@ -120,7 +120,7 @@ pub fn keyboard_event_handler(mut commands: Commands,
 
                     // restore the mouse cursor once the camera stops
                     Some(Up) | Some(W) | Some(Down) | Some(S) | Some(Right) | Some(D) | Some(Left) | Some(A) => {
-                        cursor.render(&mut commands, &asset_server);
+                        cursor.render(&mut commands, &mut asset_server);
                     },
 
                     _ => (),

@@ -5,7 +5,7 @@ pub static TILE_SIZE: f32 = 32.0;
 pub struct Tile {
     x: u32,
     y: u32,
-    img: String,
+    pub img: String,
     initialized: bool,
     entity: Entity,
 }
@@ -28,9 +28,6 @@ impl Tile {
         self.entity = entity;
     }
 
-    pub fn get_image_as_str(&mut self) -> &str {
-        self.img.as_str()
-    }
     pub fn get_initialized(&mut self) -> bool {
         self.initialized
     }

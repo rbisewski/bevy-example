@@ -88,7 +88,7 @@ pub fn camera_event_handler(mut cam: ResMut<Camera>,
                             mut event_reader: EventReader<KeyboardInput>,
                             mut positions: Query<&mut Transform, With<CameraEntity>>) {
 
-    for event in event_reader.iter() {
+    for event in event_reader.read() {
 
         // ignored released events for now
         if event.state == Released {

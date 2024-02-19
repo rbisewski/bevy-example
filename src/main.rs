@@ -110,7 +110,7 @@ fn main() {
 }
 
 fn setup(mut commands: Commands,
-         asset_server: Res<AssetServer>,
+         mut asset_server: Res<AssetServer>,
          mut cam: ResMut<Camera>,
          mut cursor: ResMut<Cursor>,
          mut dialog: ResMut<Dialog>,
@@ -120,6 +120,6 @@ fn setup(mut commands: Commands,
     cam.start(&mut commands);
     dialog.load_dialog(&mut commands, "dialog/generic.json".to_string(), 1);
     menu.render(&mut commands, &asset_server, &cam);
-    cursor.render(&mut commands, &asset_server);
+    cursor.render(&mut commands, &mut asset_server);
     lvl.render(&mut commands, &asset_server);
 }

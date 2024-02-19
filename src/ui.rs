@@ -40,7 +40,7 @@ impl UI {
         if !self.initialized {
 
             self.entity = commands.spawn(SpriteBundle {
-                                      texture: asset_server.load(self.img.as_str()),
+                                      texture: asset_server.load(&self.img),
                                       transform: Transform::from_xyz(x+self.xoffset, y, z),
                                       ..Default::default()
                                   })
@@ -71,7 +71,7 @@ impl UI {
 
         commands.entity(self.entity_hover)
                 .insert(SpriteBundle {
-                    texture: asset_server.load(self.img_hover.as_str()),
+                    texture: asset_server.load(&self.img_hover),
                     transform: Transform::from_xyz(x+self.xoffset, y, z+0.01),
                     ..Default::default()
                 });

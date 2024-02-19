@@ -227,7 +227,7 @@ impl Level {
 
             let x = tile.get_x();
             let y = tile.get_y();
-            let path_to_texture = asset_server.load(tile.get_image_as_str());
+            let path_to_texture = asset_server.load(&tile.img);
             tile.set_entity(
                 commands
                     .spawn(SpriteBundle {
@@ -253,7 +253,7 @@ impl Level {
 
             let x = decal.get_x();
             let y = decal.get_y();
-            let path_to_texture = asset_server.load(decal.get_image_as_str());
+            let path_to_texture = asset_server.load(&decal.img);
             decal.set_entity(
                 commands
                     .spawn(SpriteBundle {

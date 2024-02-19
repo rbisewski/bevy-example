@@ -269,7 +269,7 @@ impl Menu {
 
         self.entity = commands
                          .spawn(SpriteBundle {
-                             texture: asset_server.load(self.img.as_str()),
+                             texture: asset_server.load(&self.img),
                              transform: Transform::from_xyz(camera.get_x(), camera.get_y(), Z_VALUE_MENU),
                              ..Default::default()
                          })
