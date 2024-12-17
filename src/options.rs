@@ -1,5 +1,4 @@
 use std::{fs, path::Path};
-use jzon::{JsonValue, parse};
 
 pub struct Options {
     pub four_k_mode: bool,
@@ -13,13 +12,15 @@ const OPTIONS_JSON_PATH: &str = "options.json";
 pub fn get_options() -> Options {
 
     if !Path::new(OPTIONS_JSON_PATH).exists() {
-        let mut default_options = JsonValue::new_object();
-        default_options["four_k_mode"] = false.into();
-        default_options["borderless"] = false.into();
-        default_options["vsync"] = false.into();
-        default_options["fullscreen"] = false.into();
+        let default_options = r#"
+        {
+            "four_k_mode": false,
+            "borderless": false,
+            "vsync": false,
+            "fullscreen": false
+        }"#;
 
-        let res = fs::write(OPTIONS_JSON_PATH, default_options.dump());
+        let res = fs::write(OPTIONS_JSON_PATH, default_options);
         if let Err(e) = res { println!("{}", e) }
 
         return Options { four_k_mode: false, borderless: false, vsync: true, fullscreen: false }
@@ -30,10 +31,7 @@ pub fn get_options() -> Options {
         _ => String::from(""),
     };
 
-    let parsed = match parse(contents.as_str()) {
-        Ok(j) => j,
-        _ => JsonValue::new_object(),
-    };
+    let parsed: serde_json::Value = serde_json::from_str(&contents.as_str()).expect("Unable to open the options file.");
 
     // attempt to parser the values, but assume false if none are found
     let four_k_mode = match parsed["four_k_mode"].as_bool() {
@@ -82,13 +80,20 @@ pub fn set_option(key: String, value: bool) {
         }
     }
 
-    let mut options_as_json = JsonValue::new_object();
-    options_as_json["four_k_mode"] = current_options.four_k_mode.into();
-    options_as_json["borderless"] = current_options.borderless.into();
-    options_as_json["vsync"] = current_options.vsync.into();
-    options_as_json["fullscreen"] = current_options.fullscreen.into();
+    let options_as_json = format!(r#"
+        {{
+            "four_k_mode": {},
+            "borderless": {},
+            "vsync": {},
+            "fullscreen": {}
+        }}"#,
+        current_options.four_k_mode,
+        current_options.borderless,
+        current_options.vsync,
+        current_options.fullscreen
+    );
 
-    let res = fs::write(OPTIONS_JSON_PATH, options_as_json.dump());
+    let res = fs::write(OPTIONS_JSON_PATH, options_as_json);
     if let Err(e) = res { println!("{}", e) }
 }
 

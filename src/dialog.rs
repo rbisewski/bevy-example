@@ -1,5 +1,4 @@
 use std::fs;
-use jzon::parse;
 
 use bevy::prelude::{
     AssetServer,
@@ -15,7 +14,7 @@ use crate::ui::UI;
 
 struct DialogChoice {
     text: Text,
-    next: i16,
+    next: i64,
 }
 
 #[derive(Resource)]
@@ -57,10 +56,7 @@ impl Dialog {
             _ => return,
         };
 
-        let parsed = match parse(contents.as_str()) {
-            Ok(j) => j,
-            _ => return,
-        };
+        let parsed: serde_json::Value = serde_json::from_str(&contents.as_str()).expect("Unable to open the dialog file.");
 
         let dialog_entry = &parsed[number_as_string];
 
@@ -95,7 +91,7 @@ impl Dialog {
                 _ => break,
             };
 
-            let choice_next = match dialog_entry["choices"][&choice_entry]["next"].as_i16() {
+            let choice_next = match dialog_entry["choices"][&choice_entry]["next"].as_i64() {
                 Some(s) => s,
                 _ => 0,
             };
@@ -184,7 +180,7 @@ impl Dialog {
 
     pub fn click_events(&mut self,
                         mouse_x: f32,
-                        mouse_y: f32) -> i16 {
+                        mouse_y: f32) -> i64 {
 
         if !self.visible() {
             return 0;
