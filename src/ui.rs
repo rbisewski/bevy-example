@@ -5,7 +5,6 @@ use bevy::prelude::{
     Entity,
     Res,
     Sprite,
-    SpriteBundle,
     Transform,
 };
 
@@ -40,13 +39,10 @@ impl UI {
 
         if !self.initialized {
 
-            self.entity = commands.spawn(SpriteBundle {
-                                      sprite: Sprite::from_image(asset_server.load(&self.img)),
-                                      transform: Transform::from_xyz(x+self.xoffset, y, z),
-                                      ..Default::default()
-                                  })
-                                  .insert(UIEntity)
-                                  .id();
+            self.entity = commands.spawn((
+                Sprite::from_image(asset_server.load(&self.img)),
+                Transform::from_xyz(x+self.xoffset, y, z),
+            )).insert(UIEntity).id();
 
             self.entity_hover = commands.spawn(UIEntity)
                                         .id();
@@ -55,7 +51,8 @@ impl UI {
         }
 
         if self.hovered {
-            commands.entity(self.entity_hover).remove::<SpriteBundle>();
+            commands.entity(self.entity_hover).remove::<Sprite>();
+            commands.entity(self.entity_hover).remove::<Transform>();
         }
 
         self.hovered = false;
@@ -70,12 +67,11 @@ impl UI {
             return;
         }
 
-        commands.entity(self.entity_hover)
-                .insert(SpriteBundle {
-                    sprite: Sprite::from_image(asset_server.load(&self.img_hover)),
-                    transform: Transform::from_xyz(x+self.xoffset, y, z+0.01),
-                    ..Default::default()
-                });
+        commands.entity(self.entity_hover).insert((
+            Sprite::from_image(asset_server.load(&self.img_hover)),
+            Transform::from_xyz(x+self.xoffset, y, z+0.01),
+        ));
+
         self.hovered = true;
         self.x = x;
         self.y = y;

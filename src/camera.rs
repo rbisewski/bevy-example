@@ -5,7 +5,7 @@ use bevy::prelude::{
     EventReader,
     Query,
     ResMut,
-    Camera2dBundle,
+    Camera2d,
     Transform,
     Vec3,
     With,
@@ -50,20 +50,14 @@ impl Camera {
     }
 
     pub fn start(&mut self, commands: &mut Commands) {
-
-        let twodee_cam = Camera2dBundle {
-            transform: Transform::from_translation(Vec3::new(self.x, self.y, self.z)),
-            projection: OrthographicProjection {
+        self.twodee = commands.spawn((
+            Camera2d,
+            Transform::from_translation(Vec3::new(self.x, self.y, self.z)),
+            OrthographicProjection {
                 scale: 1.0/GFX_SCALE,
                 ..OrthographicProjection::default_2d()
             },
-            ..Default::default()
-        };
-
-        self.twodee = commands
-                         .spawn(twodee_cam)
-                         .insert(CameraEntity)
-                         .id();
+        )).insert(CameraEntity).id();
     }
 
     pub fn get_x(&self) -> f32 {

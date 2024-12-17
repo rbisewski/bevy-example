@@ -7,7 +7,6 @@ use bevy::prelude::{
     Resource,
     ResMut,
     Sprite,
-    SpriteBundle,
     Transform,
 };
 
@@ -268,14 +267,10 @@ impl Menu {
             }
         }
 
-        self.entity = commands
-                         .spawn(SpriteBundle {
-                             sprite: Sprite::from_image(asset_server.load(&self.img)),
-                             transform: Transform::from_xyz(camera.get_x(), camera.get_y(), Z_VALUE_MENU),
-                             ..Default::default()
-                         })
-                         .insert(MenuEntity)
-                         .id();
+        self.entity = commands.spawn((
+            Sprite::from_image(asset_server.load(&self.img)),
+            Transform::from_xyz(camera.get_x(), camera.get_y(), Z_VALUE_MENU),
+        )).insert(MenuEntity).id();
 
         self.initialized = true;
     }

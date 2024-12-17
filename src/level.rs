@@ -4,7 +4,6 @@ use bevy::prelude::{
     Transform,
     Res,
     Resource,
-    SpriteBundle,
     Sprite,
     Visibility,
 };
@@ -229,15 +228,15 @@ impl Level {
             let x = tile.get_x();
             let y = tile.get_y();
             let path_to_texture = asset_server.load(&tile.img);
-            tile.set_entity(
-                commands
-                    .spawn(SpriteBundle {
-                        //texture: path_to_texture,
-                        sprite: Sprite::from_image(path_to_texture),
-                        transform: Transform::from_xyz(TILE_SIZE * x as f32, TILE_SIZE * y as f32, Z_VALUE_TILE),
-                    ..Default::default()
-                })
-                .id()
+
+            tile.set_entity(commands.spawn((
+                    Sprite::from_image(path_to_texture),
+                    Transform::from_xyz(
+                       TILE_SIZE * x as f32,
+                       TILE_SIZE * y as f32,
+                       Z_VALUE_TILE
+                    ),
+                )).id()
             );
 
             tile.set_initialized(true);
@@ -256,15 +255,16 @@ impl Level {
             let x = decal.get_x();
             let y = decal.get_y();
             let path_to_texture = asset_server.load(&decal.img);
-            decal.set_entity(
-                commands
-                    .spawn(SpriteBundle {
-                        sprite: Sprite::from_image(path_to_texture),
-                        visibility: Visibility::Visible,
-                        transform: Transform::from_xyz(TILE_SIZE * x as f32, TILE_SIZE * y as f32, Z_VALUE_DECAL),
-                    ..Default::default()
-                })
-                .id()
+
+            decal.set_entity(commands.spawn((
+                    Sprite::from_image(path_to_texture),
+                    Visibility::Visible,
+                    Transform::from_xyz(
+                        TILE_SIZE * x as f32,
+                        TILE_SIZE * y as f32,
+                        Z_VALUE_DECAL
+                    ),
+                )).id()
             );
 
             decal.set_initialized(true);

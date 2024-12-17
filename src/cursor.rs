@@ -7,11 +7,9 @@ use bevy::prelude::{
     CursorMoved,
     Entity,
     EventReader,
-    Handle,
     Query,
     Res,
     ResMut,
-    SpriteBundle,
     Sprite,
     Transform,
     With,
@@ -52,14 +50,10 @@ impl Cursor {
             self.initialized = false;
         }
 
-        self.entity = commands
-                         .spawn(SpriteBundle {
-                             sprite: Sprite::from_image(asset_server.load(&self.img)),
-                             transform: Transform::from_xyz(self.x, self.y, Z_VALUE_CURSOR),
-                             ..Default::default()
-                         })
-                         .insert(CursorEntity)
-                         .id();
+        self.entity = commands.spawn((
+            Sprite::from_image(asset_server.load(&self.img)),
+            Transform::from_xyz(self.x, self.y, Z_VALUE_CURSOR),
+        )).insert(CursorEntity).id();
 
         self.initialized = true;
     }
