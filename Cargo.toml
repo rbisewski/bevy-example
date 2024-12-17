@@ -3,7 +3,7 @@ name = "bevy-example"
 version = "1.0.9"
 authors = ["Robert Bisewski <rbisewski@ibiscybernetics.com>"]
 edition = "2021"
-rust-version = "1.76"
+rust-version = "1.83"
 resolver = "2"
 
 [profile.release]
@@ -19,6 +19,6 @@ rpath = false
 strip = "symbols"
 
 [dependencies]
-bevy = "0.13.0"
+bevy = "0.14.0"
 jzon = "0.12.5"
 rand = "0.8.5"

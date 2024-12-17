@@ -3,10 +3,10 @@ use bevy::prelude::Color;
 pub const CAMERA_HIGHEST_LEVEL: f32 = 1.0;
 
 pub const DIALOG_MAIN_TEXT_COLOR: Color = Color::BLACK;
-pub const DIALOG_CHOICE_COLOR: Color = Color::rgb(0.65,0.65,0.65);
+pub const DIALOG_CHOICE_COLOR: Color = Color::srgb(0.65,0.65,0.65);
 pub const DIALOG_CHOICE_HEIGHT: f32 = 12.;
 pub const DIALOG_CHOICE_WIDTH: f32 = 400.;
-pub const DIALOG_HOVER_COLOR: Color = Color::rgb(0.75,0.75,0.75);
+pub const DIALOG_HOVER_COLOR: Color = Color::srgb(0.75,0.75,0.75);
 pub const DIALOG_FONT_SIZE: f32 = 20.;
 
 pub const MOUSE_GFX_HEIGHT: f32 = 16.;
