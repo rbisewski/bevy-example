@@ -43,20 +43,21 @@ use bevy::{prelude::{
     Res,
     ResMut, Startup, Update,
 }, window::{
-    Cursor as BevyCursor,
+    CursorOptions as BevyCursor,
+    MonitorSelection,
     PresentMode,
+    Window,
     WindowMode,
     WindowPlugin,
-    Window,
-    WindowResolution,
+    WindowResolution
 }};
 
 fn main() {
 
     let current_options = get_options();
 
-    let mode: WindowMode = if current_options.fullscreen && current_options.borderless { WindowMode::BorderlessFullscreen }
-                           else if current_options.fullscreen { WindowMode::Fullscreen }
+    let mode: WindowMode = if current_options.fullscreen && current_options.borderless { WindowMode::BorderlessFullscreen(MonitorSelection::Primary) }
+                           else if current_options.fullscreen { WindowMode::Fullscreen(MonitorSelection::Primary) }
                            else { WindowMode::Windowed };
 
     let scale_factor_override = match current_options.four_k_mode {
@@ -81,7 +82,7 @@ fn main() {
             .set(ImagePlugin::default_nearest())
             .set(WindowPlugin {
                 primary_window: Some(Window {
-                    cursor: bevy_cursor,
+                    cursor_options: bevy_cursor,
                     title: "Bevy engine example using tiles, camera, and keyboard plus mouse input".to_string(),
                     resolution: WindowResolution::new(SCREEN_WIDTH,SCREEN_HEIGHT).with_scale_factor_override(scale_factor_override),
                     resizable: false,

@@ -4,6 +4,7 @@ use bevy::prelude::{
     Component,
     Entity,
     Res,
+    Sprite,
     SpriteBundle,
     Transform,
 };
@@ -40,7 +41,7 @@ impl UI {
         if !self.initialized {
 
             self.entity = commands.spawn(SpriteBundle {
-                                      texture: asset_server.load(&self.img),
+                                      sprite: Sprite::from_image(asset_server.load(&self.img)),
                                       transform: Transform::from_xyz(x+self.xoffset, y, z),
                                       ..Default::default()
                                   })
@@ -71,7 +72,7 @@ impl UI {
 
         commands.entity(self.entity_hover)
                 .insert(SpriteBundle {
-                    texture: asset_server.load(&self.img_hover),
+                    sprite: Sprite::from_image(asset_server.load(&self.img_hover)),
                     transform: Transform::from_xyz(x+self.xoffset, y, z+0.01),
                     ..Default::default()
                 });

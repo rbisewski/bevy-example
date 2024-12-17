@@ -7,10 +7,12 @@ use bevy::prelude::{
     CursorMoved,
     Entity,
     EventReader,
+    Handle,
     Query,
     Res,
     ResMut,
     SpriteBundle,
+    Sprite,
     Transform,
     With,
     MouseButton, Resource,
@@ -52,7 +54,7 @@ impl Cursor {
 
         self.entity = commands
                          .spawn(SpriteBundle {
-                             texture: asset_server.load(&self.img),
+                             sprite: Sprite::from_image(asset_server.load(&self.img)),
                              transform: Transform::from_xyz(self.x, self.y, Z_VALUE_CURSOR),
                              ..Default::default()
                          })

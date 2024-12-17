@@ -19,6 +19,6 @@ rpath = false
 strip = "symbols"
 
 [dependencies]
-bevy = "0.14.0"
+bevy = "0.15.0"
 jzon = "0.12.5"
 rand = "0.8.5"

@@ -55,7 +55,7 @@ impl Camera {
             transform: Transform::from_translation(Vec3::new(self.x, self.y, self.z)),
             projection: OrthographicProjection {
                 scale: 1.0/GFX_SCALE,
-                ..Default::default()
+                ..OrthographicProjection::default_2d()
             },
             ..Default::default()
         };

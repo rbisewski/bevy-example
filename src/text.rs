@@ -1,13 +1,6 @@
-use bevy::{prelude::{
-    AssetServer,
-    Commands,
-    Color,
-    Entity,
-    Res,
-    Text2dBundle,
-    TextStyle,
-    Transform,
-}, math::{Vec3, Quat}};
+use bevy::{math::{Quat, Vec3}, prelude::{
+    AssetServer, Color, Commands, Entity, Res, Text2d, TextFont, Transform
+}, text::TextColor};
 
 use crate::constants::{
     DIALOG_HOVER_COLOR,
@@ -55,22 +48,20 @@ impl Text {
             self.free(commands);
         }
 
-        self.entity = commands.spawn(Text2dBundle {
-                                  transform: Transform {
-                                      rotation: Quat::from_rotation_z(0.),
-                                      scale: Vec3::new(TEXT_DIALOG_SCALE,TEXT_DIALOG_SCALE,TEXT_DIALOG_SCALE),
-                                      translation: Vec3::new(x, y, z),
-                                  },
-                                  text: bevy::prelude::Text::from_section (
-                                      self.content.clone(),
-                                      TextStyle {
-                                          font: asset_server.load(font.to_owned()),
-                                          font_size: self.size,
-                                          color: self.color,
-                                      }
-                                  ),
-                                  ..Default::default()
-                              }).id();
+        self.entity = commands.spawn((
+            Text2d::from(self.content.clone()),
+            TextFont {
+                font: asset_server.load(font.to_owned()),
+                font_size: self.size,
+                ..Default::default()
+            },
+            TextColor(self.color),
+            Transform {
+                rotation: Quat::from_rotation_z(0.),
+                scale: Vec3::new(TEXT_DIALOG_SCALE,TEXT_DIALOG_SCALE,TEXT_DIALOG_SCALE),
+                translation: Vec3::new(x, y, z),
+            }
+        )).id();
 
         self.initialized = true;
         self.x = x;

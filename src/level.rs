@@ -5,6 +5,7 @@ use bevy::prelude::{
     Res,
     Resource,
     SpriteBundle,
+    Sprite,
     Visibility,
 };
 
@@ -231,7 +232,8 @@ impl Level {
             tile.set_entity(
                 commands
                     .spawn(SpriteBundle {
-                        texture: path_to_texture,
+                        //texture: path_to_texture,
+                        sprite: Sprite::from_image(path_to_texture),
                         transform: Transform::from_xyz(TILE_SIZE * x as f32, TILE_SIZE * y as f32, Z_VALUE_TILE),
                     ..Default::default()
                 })
@@ -257,7 +259,7 @@ impl Level {
             decal.set_entity(
                 commands
                     .spawn(SpriteBundle {
-                        texture: path_to_texture,
+                        sprite: Sprite::from_image(path_to_texture),
                         visibility: Visibility::Visible,
                         transform: Transform::from_xyz(TILE_SIZE * x as f32, TILE_SIZE * y as f32, Z_VALUE_DECAL),
                     ..Default::default()
