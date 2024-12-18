@@ -34,7 +34,10 @@ build:
 	@cargo build --release
 
 run:
-	cargo run --release
+	@cargo run --release
+
+wasm:
+	@CARGO_TARGET_WASM32_UNKNOWN_UNKNOWN_RUNNER=wasm-server-runner RUSTFLAGS='--cfg getrandom_backend="wasm_js"' cargo run --release --target wasm32-unknown-unknown
 
 lint:
 	@cargo clippy -- -A clippy::too_many_arguments

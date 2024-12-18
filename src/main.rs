@@ -67,7 +67,7 @@ fn main() {
 
     // Present Mode is what wgpu calls "V-Sync"
     let present_mode = match current_options.vsync {
-        true => PresentMode::Mailbox,
+        true => PresentMode::AutoVsync,
         false => PresentMode::Immediate
     };
 
@@ -83,6 +83,7 @@ fn main() {
             .set(WindowPlugin {
                 primary_window: Some(Window {
                     cursor_options: bevy_cursor,
+                    fit_canvas_to_parent: true,
                     title: "Bevy engine example using tiles, camera, and keyboard plus mouse input".to_string(),
                     resolution: WindowResolution::new(SCREEN_WIDTH,SCREEN_HEIGHT).with_scale_factor_override(scale_factor_override),
                     resizable: false,
@@ -119,7 +120,7 @@ fn setup(mut commands: Commands,
          mut lvl: ResMut<Level>) {
 
     cam.start(&mut commands);
-    dialog.load_dialog(&mut commands, "dialog/generic.json".to_string(), 1);
+    dialog.load_dialog(&mut commands, 1);
     menu.render(&mut commands, &asset_server, &cam);
     cursor.render(&mut commands, &mut asset_server);
     lvl.render(&mut commands, &asset_server);

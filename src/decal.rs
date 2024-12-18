@@ -1,5 +1,3 @@
-use std::fs;
-
 use bevy::prelude::Entity;
 
 pub struct Decal {
@@ -46,31 +44,20 @@ impl Decal {
         self.y
     }
 
-    pub fn get_decal_type_max(dir: String, type_str: String) -> u32 {
-        let reader = match fs::read_dir(dir) {
-            Ok(v) => v,
-            _ => return 0,
-        };
-
-        let mut count = 0;
-
-        for entry in reader {
-
-            let file = match entry {
-                Ok(f) => f,
-                _ => continue,
-            };
-
-            let filename = match file.file_name().to_str() {
-                Some(s) => s.to_string(),
-                _ => continue,
-            };
-
-            if filename.contains(&type_str) {
-                count += 1;
-            }
+    pub fn get_decal_type_max(type_str: &str) -> u32 {
+        match type_str {
+            "asteroid_"        => 6,
+            "bones_"           => 3,
+            "cactus_"          => 5,
+            "dead_vegatation_" => 5,
+            "egg_"             => 1,
+            "flower_"          => 2,
+            "leaves_"          => 1,
+            "mushroom_"        => 5,
+            "planet_"          => 14,
+            "plant_"           => 14,
+            "rock_"            => 4,
+            _ => 1,
         }
-
-        count
     }
 }

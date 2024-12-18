@@ -1,5 +1,3 @@
-use std::fs;
-
 use bevy::prelude::{
     AssetServer,
     Commands,
@@ -42,7 +40,7 @@ impl Dialog {
         Dialog {initialized: false, ui, text, dialog_choices: vec![]}
     }
 
-    pub fn load_dialog(&mut self, commands: &mut Commands, filename: String, number: i8) {
+    pub fn load_dialog(&mut self, commands: &mut Commands, number: i8) {
 
         // the zeroth dialog option is reserved for null
         if number == 0 {
@@ -51,12 +49,9 @@ impl Dialog {
 
         let number_as_string: String = number.to_string();
 
-        let contents = match fs::read_to_string(filename) {
-            Ok(s) => s,
-            _ => return,
-        };
+        let contents = include_str!("../dialog/generic.json");
 
-        let parsed: serde_json::Value = serde_json::from_str(&contents.as_str()).expect("Unable to open the dialog file.");
+        let parsed: serde_json::Value = serde_json::from_str(contents).expect("Unable to open the dialog file.");
 
         let dialog_entry = &parsed[number_as_string];
 
@@ -91,10 +86,7 @@ impl Dialog {
                 _ => break,
             };
 
-            let choice_next = match dialog_entry["choices"][&choice_entry]["next"].as_i64() {
-                Some(s) => s,
-                _ => 0,
-            };
+            let choice_next = dialog_entry["choices"][&choice_entry]["next"].as_i64().unwrap_or_default();
 
             self.dialog_choices.push(
                 DialogChoice {

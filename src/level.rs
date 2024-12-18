@@ -8,9 +8,6 @@ use bevy::prelude::{
     Visibility,
 };
 
-
-use rand::Rng;
-
 use crate::constants::{Z_VALUE_DECAL, Z_VALUE_TILE};
 use crate::decal::Decal;
 use crate::tile::{Tile, TILE_SIZE};
@@ -44,22 +41,20 @@ impl Level {
 
         let (biome_max, biome_folder, decal_types) = Level::set_biome(&biome);
 
-        let mut rng = rand::thread_rng();
-
         for x in min..max {
             for y in min..max {
-                let img_num = rng.gen_range(1..biome_max);
+                let img_num = Level::random(1, biome_max);
                 let tile = Tile::new(x, y, [biome_folder, &img_num.to_string(), ".png"].concat());
                 tiles.push(tile);
             }
         }
 
         // generate 35 to 45 random decals
-        let decal_amount = rng.gen_range(35..45);
+        let decal_amount = Level::random(35,45);
         for _ in 0..decal_amount {
 
-            let x = rng.gen_range(0..22);
-            let y = rng.gen_range(0..22);
+            let x = Level::random(0,22);
+            let y = Level::random(0,22);
 
             // some very basic logic to skip decals that exists in the same (x,y)
             let mut overlapping_decal = false;
@@ -77,15 +72,15 @@ impl Level {
                 continue
             }
 
-            let random_decal_type = rng.gen_range(0..decal_types.len());
+            let random_decal_type = Level::random(0, decal_types.len() as u32) as usize;
 
             let decal_max = Decal::get_decal_type_max(
-                "./assets/img/decals/".to_string(),
-                decal_types[random_decal_type].as_str().to_string(),
+                decal_types[random_decal_type].as_str(),
             );
+
             let img_num = match decal_max {
                 1 => 1,
-                _ => rng.gen_range(1..decal_max+1),
+                _ => Level::random(1, decal_max+1),
             };
 
             let img = [
@@ -111,7 +106,7 @@ impl Level {
      *           char*       biome folder location
      *           string[]    list of possible decal types
      */
-    pub fn set_biome(biome: &LevelBiome) -> (i32, &'static str, Vec<String>) {
+    pub fn set_biome(biome: &LevelBiome) -> (u32, &'static str, Vec<String>) {
         let decal_types: Vec<String>;
         let biome_max;
         let biome_folder = match biome {
@@ -183,24 +178,21 @@ impl Level {
         self.biome = biome;
         self.decal_types = decal_types;
 
-        let mut rng = rand::thread_rng();
-
         for tile in self.tiles.iter_mut() {
-            let img_num = rng.gen_range(1..biome_max);
+            let img_num = Level::random(1, biome_max);
             tile.set_image(
                 [biome_folder, &img_num.to_string(), ".png"].concat()
             );
         }
 
         for decal in self.decals.iter_mut() {
-            let random_decal_type = rng.gen_range(0..self.decal_types.len());
+            let random_decal_type = Level::random(0, self.decal_types.len() as u32) as usize;
             let decal_max = Decal::get_decal_type_max(
-                "./assets/img/decals/".to_string(),
-                self.decal_types[random_decal_type].as_str().to_string(),
+                &self.decal_types[random_decal_type],
             );
             let img_num = match decal_max {
                 1 => 1,
-                _ => rng.gen_range(1..decal_max+1),
+                _ => Level::random(1, decal_max+1),
             };
             decal.set_image([
                 "img/decals/",
@@ -209,6 +201,10 @@ impl Level {
                 ".png"
             ].concat());
         }
+    }
+
+    pub fn random(min: u32, max: u32) -> u32 {
+        fastrand::u32(min..max)
     }
 
     pub fn render(&mut self,

@@ -16,7 +16,7 @@ pub fn get_options() -> Options {
         {
             "four_k_mode": false,
             "borderless": false,
-            "vsync": false,
+            "vsync": true,
             "fullscreen": false
         }"#;
 
@@ -26,30 +26,15 @@ pub fn get_options() -> Options {
         return Options { four_k_mode: false, borderless: false, vsync: true, fullscreen: false }
     }
 
-    let contents = match fs::read_to_string(OPTIONS_JSON_PATH) {
-        Ok(s) => s,
-        _ => String::from(""),
-    };
+    let contents = fs::read_to_string(OPTIONS_JSON_PATH).unwrap_or_default();
 
-    let parsed: serde_json::Value = serde_json::from_str(&contents.as_str()).expect("Unable to open the options file.");
+    let parsed: serde_json::Value = serde_json::from_str(contents.as_str()).expect("Unable to open the options file.");
 
     // attempt to parser the values, but assume false if none are found
-    let four_k_mode = match parsed["four_k_mode"].as_bool() {
-        Some(b) => b,
-        _ => false,
-    };
-    let borderless = match parsed["borderless"].as_bool() {
-        Some(b) => b,
-        _ => false,
-    };
-    let vsync = match parsed["vsync"].as_bool() {
-        Some(b) => b,
-        _ => false,
-    };
-    let fullscreen = match parsed["fullscreen"].as_bool() {
-        Some(b) => b,
-        _ => false,
-    };
+    let four_k_mode = parsed["four_k_mode"].as_bool().unwrap_or(false);
+    let borderless = parsed["borderless"].as_bool().unwrap_or(false);
+    let vsync = parsed["vsync"].as_bool().unwrap_or(false);
+    let fullscreen = parsed["fullscreen"].as_bool().unwrap_or(false);
 
     Options {
         four_k_mode,
