@@ -12,7 +12,6 @@ use crate::constants::{Z_VALUE_DECAL, Z_VALUE_TILE};
 use crate::decal::Decal;
 use crate::tile::{Tile, TILE_SIZE};
 
-#[allow(dead_code)]
 pub enum LevelBiome {
     Desert,
     Grass,
@@ -50,39 +49,23 @@ impl Level {
         }
 
         // generate 35 to 45 random decals
-        let decal_amount = Level::random(35,45);
-        for _ in 0..decal_amount {
+        let mut coords: Vec<(u32,u32)> = vec![];
+        for _ in 0..Level::random(35,45) {
 
-            let x = Level::random(0,22);
-            let y = Level::random(0,22);
+            let xy = (Level::random(0,22), Level::random(0,22));
 
             // some very basic logic to skip decals that exists in the same (x,y)
-            let mut overlapping_decal = false;
-            for d in decals.iter_mut() {
-
-                let given_x = d.get_x();
-                let given_y = d.get_y();
-
-                if x == given_x && y == given_y {
-                    overlapping_decal = true;
-                    break;
-                }
+            if coords.contains(&xy) {
+                continue;
             }
-            if overlapping_decal {
-                continue
-            }
+            coords.push(xy);
 
             let random_decal_type = Level::random(0, decal_types.len() as u32) as usize;
-
             let decal_max = Decal::get_decal_type_max(
                 decal_types[random_decal_type].as_str(),
             );
 
-            let img_num = match decal_max {
-                1 => 1,
-                _ => Level::random(1, decal_max+1),
-            };
-
+            let img_num = Level::random(1, decal_max);
             let img = [
                 "img/decals/",
                 decal_types[random_decal_type].as_str(),
@@ -90,7 +73,7 @@ impl Level {
                 ".png"
             ].concat();
 
-            let decal = Decal::new(x,y,img);
+            let decal = Decal::new(xy.0,xy.1,img);
             decals.push(decal);
         }
 
@@ -204,6 +187,11 @@ impl Level {
     }
 
     pub fn random(min: u32, max: u32) -> u32 {
+        if min == 1 && max == 1 {
+            return 1;
+        } else if min == max {
+            return max;
+        }
         fastrand::u32(min..max)
     }
 
