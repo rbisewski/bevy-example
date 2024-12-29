@@ -4,6 +4,8 @@ use camera::{Camera, camera_event_handler};
 mod constants;
 use constants::{CAMERA_HIGHEST_LEVEL, SCREEN_HEIGHT, SCREEN_WIDTH};
 
+mod creature;
+
 mod cursor;
 use cursor::{Cursor, mouse_event_handler};
 
@@ -32,6 +34,8 @@ use options::get_options;
 mod text;
 
 mod ui;
+
+mod utils;
 
 use bevy::{prelude::{
     App,

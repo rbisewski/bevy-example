@@ -21,6 +21,7 @@ use bevy::{
     input::keyboard::KeyCode::ArrowRight,
     input::keyboard::KeyCode::ArrowLeft,
     input::keyboard::KeyCode::Escape,
+    input::keyboard::KeyCode::Space,
 };
 
 use crate::cursor::Cursor;
@@ -58,6 +59,14 @@ pub fn keyboard_event_handler(mut commands: Commands,
                     ArrowUp | KeyW | ArrowDown | KeyS | ArrowRight | KeyD | ArrowLeft | KeyA => {
                         if gamestate.get_status() == Status::Playing {
                             cursor.hide(&mut commands);
+                        }
+                    },
+
+                    // hide the mouse whilst the player is moving or pressing Space
+                    Space => {
+                        if gamestate.get_status() == Status::Playing {
+                            lvl.next_turn();
+                            lvl.render(&mut commands, &asset_server);
                         }
                     },
 

@@ -17,7 +17,7 @@
         }
     },
     "1": {
-        "content": "Press {1} to change the biome.\nPress {2} to randomize the tiles.\nPress {W,A,S,D} or the arrow keys to navigate.\nPress {ESC} to open and close the menu.",
+        "content": "Press {1} to change the biome.\nPress {2} to randomize the tiles.\nPress {W,A,S,D} or the arrow keys to navigate.\nPress {Space} to move the creatures.\nPress {ESC} to open and close the menu.",
         "choices": {
             "1.1": {
                 "text": "1. Let's get started...",
