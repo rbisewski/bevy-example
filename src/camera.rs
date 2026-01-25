@@ -9,9 +9,9 @@ use bevy::prelude::{
     Transform,
     Vec3,
     With,
-    OrthographicProjection,
     Resource,
 };
+use bevy::render::camera::{OrthographicProjection, Projection};
 use bevy::{
     input::keyboard::KeyboardInput,
     input::ButtonState::Released,
@@ -50,14 +50,14 @@ impl Camera {
     }
 
     pub fn start(&mut self, commands: &mut Commands) {
-        self.twodee = commands.spawn((
-            Camera2d,
-            Transform::from_translation(Vec3::new(self.x, self.y, self.z)),
-            OrthographicProjection {
-                scale: 1.0/GFX_SCALE,
-                ..OrthographicProjection::default_2d()
-            },
-        )).insert(CameraEntity).id();
+        self.twodee = commands
+            .spawn(Camera2d)
+            .insert(Transform::from_translation(Vec3::new(self.x, self.y, self.z)))
+            .insert(Projection::Orthographic(OrthographicProjection {
+                    scale: 1.0 / GFX_SCALE,
+                    ..OrthographicProjection::default_2d()
+            }))
+            .insert(CameraEntity).id();
     }
 
     pub fn get_x(&self) -> f32 {

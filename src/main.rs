@@ -37,31 +37,36 @@ mod ui;
 
 mod utils;
 
-use bevy::{prelude::{
-    App,
-    AssetServer,
-    Commands,
-    DefaultPlugins,
-    ImagePlugin,
-    PluginGroup,
-    Res,
-    ResMut, Startup, Update,
-}, window::{
-    CursorOptions as BevyCursor,
-    MonitorSelection,
-    PresentMode,
-    Window,
-    WindowMode,
-    WindowPlugin,
-    WindowResolution
-}};
+use bevy::{
+    prelude::{
+        App,
+        AssetServer,
+        Commands,
+        DefaultPlugins,
+        ImagePlugin,
+        PluginGroup,
+        Res,
+        ResMut,
+        Startup,
+        Update,
+    }, window::{
+        CursorOptions as BevyCursor,
+        MonitorSelection,
+        PresentMode,
+        VideoModeSelection,
+        Window,
+        WindowMode,
+        WindowPlugin,
+        WindowResolution
+    }
+};
 
 fn main() {
 
     let current_options = get_options();
 
     let mode: WindowMode = if current_options.fullscreen && current_options.borderless { WindowMode::BorderlessFullscreen(MonitorSelection::Primary) }
-                           else if current_options.fullscreen { WindowMode::Fullscreen(MonitorSelection::Primary) }
+                           else if current_options.fullscreen { WindowMode::Fullscreen(MonitorSelection::Primary, VideoModeSelection::Current) }
                            else { WindowMode::Windowed };
 
     let scale_factor_override = match current_options.four_k_mode {
