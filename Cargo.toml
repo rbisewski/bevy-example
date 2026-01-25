@@ -2,8 +2,8 @@
 name = "bevy-example"
 version = "1.1.0"
 authors = ["Robert Bisewski <rbisewski@ibiscybernetics.com>"]
-edition = "2021"
-rust-version = "1.83"
+edition = "2024"
+rust-version = "1.85"
 resolver = "2"
 
 [profile.release]
