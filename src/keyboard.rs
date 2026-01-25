@@ -1,7 +1,7 @@
+use bevy::ecs::message::MessageReader;
 use bevy::prelude::{
     AssetServer,
     Commands,
-    EventReader,
     Res,
     ResMut,
 };
@@ -31,7 +31,7 @@ use crate::level::{Level, LevelBiome};
 
 pub fn keyboard_event_handler(mut commands: Commands,
                           mut asset_server: Res<AssetServer>,
-                          mut event_reader: EventReader<KeyboardInput>,
+                          mut event_reader: MessageReader<KeyboardInput>,
                           mut cursor: ResMut<Cursor>,
                           mut gamestate: ResMut<Gamestate>,
                           menu: ResMut<Menu>,

@@ -91,7 +91,6 @@ fn main() {
             .set(ImagePlugin::default_nearest())
             .set(WindowPlugin {
                 primary_window: Some(Window {
-                    cursor_options: bevy_cursor,
                     fit_canvas_to_parent: true,
                     title: "Bevy engine example using tiles, camera, and keyboard plus mouse input".to_string(),
                     resolution: WindowResolution::new(SCREEN_WIDTH,SCREEN_HEIGHT).with_scale_factor_override(scale_factor_override),
@@ -100,10 +99,11 @@ fn main() {
                     present_mode,
                     ..Default::default()
                 }),
+                primary_cursor_options: Some(bevy_cursor),
                 ..Default::default()})
         )
 
-        .insert_resource(Camera::new(320.0, 320.0, CAMERA_HIGHEST_LEVEL, SCREEN_HEIGHT, SCREEN_WIDTH))
+        .insert_resource(Camera::new(320.0, 320.0, CAMERA_HIGHEST_LEVEL, SCREEN_HEIGHT as f32, SCREEN_WIDTH as f32))
         .insert_resource(Cursor::new("img/ui/mouse_gfx.png".to_string()))
         .insert_resource(Dialog::new())
         .insert_resource(Gamestate::new())

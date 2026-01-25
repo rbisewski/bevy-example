@@ -32,7 +32,21 @@ pub struct UI {
 impl UI {
 
     pub fn new(name: String, img: String, img_hover: String, height: f32, width: f32) -> UI {
-        UI { name, img, img_hover, initialized: false, hovered: false, entity: Entity::from_raw(0), entity_hover: Entity::from_raw(0), height, width, x: 0., y: 0., z: 0., xoffset: 0.}
+        UI {
+            name,
+            img,
+            img_hover,
+            initialized: false,
+            hovered: false,
+            entity: Entity::from_raw_u32(0).unwrap(),
+            entity_hover: Entity::from_raw_u32(0).unwrap(),
+            height,
+            width,
+            x: 0.,
+            y: 0.,
+            z: 0.,
+            xoffset: 0.
+        }
     }
 
     pub fn render(&mut self, commands: &mut Commands, asset_server: &Res<AssetServer>, x: f32, y: f32, z: f32) {

@@ -1,8 +1,8 @@
+use bevy::ecs::message::MessageReader;
 use bevy::prelude::{
     Commands,
     Component,
     Entity,
-    EventReader,
     Query,
     ResMut,
     Camera2d,
@@ -10,8 +10,9 @@ use bevy::prelude::{
     Vec3,
     With,
     Resource,
+    OrthographicProjection,
+    Projection
 };
-use bevy::render::camera::{OrthographicProjection, Projection};
 use bevy::{
     input::keyboard::KeyboardInput,
     input::ButtonState::Released,
@@ -46,7 +47,7 @@ pub struct Camera {
 impl Camera {
 
     pub fn new(x: f32, y: f32, z: f32, screen_height: f32, screen_width: f32) -> Camera {
-        Camera { x, y, z, twodee: Entity::from_raw(0), screen_height, screen_width }
+        Camera { x, y, z, twodee: Entity::from_raw_u32(0).unwrap(), screen_height, screen_width }
     }
 
     pub fn start(&mut self, commands: &mut Commands) {
@@ -79,7 +80,7 @@ impl Camera {
 
 pub fn camera_event_handler(mut cam: ResMut<Camera>,
                             gamestate: ResMut<Gamestate>,
-                            mut event_reader: EventReader<KeyboardInput>,
+                            mut event_reader: MessageReader<KeyboardInput>,
                             mut positions: Query<&mut Transform, With<CameraEntity>>) {
 
     for event in event_reader.read() {

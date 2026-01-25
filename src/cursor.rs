@@ -1,3 +1,4 @@
+use bevy::ecs::message::MessageReader;
 use bevy::input::ButtonState;
 use bevy::input::mouse::MouseButtonInput;
 use bevy::prelude::{
@@ -6,7 +7,6 @@ use bevy::prelude::{
     Component,
     CursorMoved,
     Entity,
-    EventReader,
     Query,
     Res,
     ResMut,
@@ -38,7 +38,7 @@ pub struct Cursor {
 impl Cursor {
 
     pub fn new(img: String) -> Cursor {
-        Cursor { img, initialized: false, entity: Entity::from_raw(0), x: 0., y: 0. }
+        Cursor { img, initialized: false, entity: Entity::from_raw_u32(0).unwrap(), x: 0., y: 0. }
     }
 
     pub fn render(&mut self,
@@ -66,8 +66,8 @@ impl Cursor {
     }
 }
 
-pub fn mouse_event_handler(mut cursor_moved: EventReader<CursorMoved>,
-                           mut cursor_clicked: EventReader<MouseButtonInput>,
+pub fn mouse_event_handler(mut cursor_moved: MessageReader<CursorMoved>,
+                           mut cursor_clicked: MessageReader<MouseButtonInput>,
                            mut commands: Commands,
                            asset_server: Res<AssetServer>,
                            mut cursor: ResMut<Cursor>,

@@ -41,7 +41,7 @@ impl Menu {
     pub fn new(img: String) -> Menu {
         Menu { img, 
                initialized: false,
-               entity: Entity::from_raw(0),
+               entity: Entity::from_raw_u32(0).unwrap(),
                options_modified: false,
                mode: MODE_CONTINUE,
                menu_elements: vec![] }

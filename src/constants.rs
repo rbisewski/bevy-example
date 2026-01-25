@@ -12,8 +12,8 @@ pub const DIALOG_FONT_SIZE: f32 = 20.;
 pub const MOUSE_GFX_HEIGHT: f32 = 16.;
 pub const MOUSE_GFX_WIDTH: f32 = 28.;
 
-pub const SCREEN_HEIGHT: f32 = 720.0;
-pub const SCREEN_WIDTH: f32 = 1280.0;
+pub const SCREEN_HEIGHT: u32 = 720;
+pub const SCREEN_WIDTH: u32 = 1280;
 
 pub const TEXT_DIALOG_SCALE: f32 = 0.5;
 

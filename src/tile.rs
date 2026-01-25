@@ -17,7 +17,7 @@ impl Tile {
             y,
             img,
             initialized: false,
-            entity: Entity::from_raw(0),
+            entity: Entity::from_raw_u32(0).unwrap(),
         }
     }
 

@@ -30,7 +30,7 @@ impl Text {
     pub fn new(size: f32, color: Color, content: &str, hoverable: bool) -> Text {
         Text {
             initialized: false,
-            entity: Entity::from_raw(0), 
+            entity: Entity::from_raw_u32(0).unwrap(), 
             size,
             color, 
             content: content.to_string(),
